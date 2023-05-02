@@ -1,0 +1,3 @@
+title: shiro_waf_config
+debug: true
+serverPort: 8080

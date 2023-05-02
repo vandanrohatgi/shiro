@@ -1,0 +1,19 @@
+version: "3.9"
+services:
+
+  server:
+    image: kennethreitz/httpbin
+    ports:
+      - 80:80
+    container_name: web_server
+
+  proxy:
+    build:
+      dockerfile: Dockerfile
+      context: ./src
+    container_name: shiro_waf
+    depends_on:
+      - server
+    volumes:
+      - ./src:/opt/app/proxy
+  
