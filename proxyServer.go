@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"net/http/httputil"
@@ -12,7 +11,8 @@ var webServerUrl string = "https://httpbin.org/"
 var proxyServerPort string = ":8080"
 
 func main() {
-	fmt.Println("Starting Proxy...")
+	log.Println("Starting Proxy...")
+
 	origin, err := url.Parse(webServerUrl)
 	if err != nil {
 		panic(err)
@@ -21,4 +21,5 @@ func main() {
 
 	http.Handle("/", proxy)
 	log.Fatal(http.ListenAndServe(proxyServerPort, nil))
+
 }
