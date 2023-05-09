@@ -12,5 +12,5 @@ auto generate rules file
 expand from http protocol to multiple protocols
 make the tool CI/CD friendly
 dockerize
-host the the firewall
-GUI using maybe dar/kotlin/javascript
+host the the firewall (ngrok / AWS)
+GUI using maybe dart/kotlin/javascript
