@@ -6,7 +6,7 @@ test web server - done
 proxy server - done
 connect both servers - done
 create custom golang web server - not needed
-rules regex file format
+rules regex file format - done
 filter and block traffic based on rules
 auto generate rules file
 expand from http protocol to multiple protocols

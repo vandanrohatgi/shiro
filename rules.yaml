@@ -1,0 +1,11 @@
+- path: /
+  allowPattern: .*
+  method: ''
+  description: '' 
+  meta: ''
+  
+- path: /home
+  allowPattern: ''
+  method: GET
+  description: '' 
+  meta:  ''
