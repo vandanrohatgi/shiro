@@ -8,11 +8,13 @@ import (
 )
 
 type Rules []struct {
-	Path         string `yaml:"path"`
-	AllowPattern string `yaml:"allowPattern"`
-	Method       string `yaml:"method"`
-	Description  string `yaml:"description"`
-	Meta         string `yaml:"meta"`
+	Path                string `yaml:"path"`
+	AllowPatternURL     string `yaml:"allowPatternURL"`
+	AllowPatternBody    string `yaml:"allowPatternBody"`
+	AllowPatternHeaders string `yaml:"allowPatternHeaders"`
+	Method              string `yaml:"method"`
+	Description         string `yaml:"description"`
+	Meta                string `yaml:"meta"`
 }
 
 func PrintRules() {
