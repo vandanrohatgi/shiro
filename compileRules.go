@@ -1,4 +1,4 @@
-package rules
+package main
 
 import (
 	"log"
@@ -7,7 +7,7 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-type Rules []struct {
+type Rules struct {
 	Path                string `yaml:"path"`
 	AllowPatternURL     string `yaml:"allowPatternURL"`
 	AllowPatternBody    string `yaml:"allowPatternBody"`
@@ -17,15 +17,28 @@ type Rules []struct {
 	Meta                string `yaml:"meta"`
 }
 
-func PrintRules() {
-	yamlFile, err := os.ReadFile("rules.yaml")
+type RuleConfig struct {
+	Path       string
+	RulesArray []Rules
+}
+
+type RuleMethods interface {
+	IngestRules()
+	PrintRules()
+	GetInstance() RuleConfig
+}
+
+func (r *RuleConfig) IngestRules() {
+	yamlFile, err := os.ReadFile(r.Path)
 	if err != nil {
-		log.Fatal("Error reading rules.yaml file", err)
+		log.Fatal("Error reading file", r.Path, err)
 	}
-	var rule Rules
-	err = yaml.Unmarshal(yamlFile, &rule)
+	err = yaml.Unmarshal(yamlFile, &r.RulesArray)
 	if err != nil {
 		log.Fatal("Unable to extract rules", err)
 	}
-	log.Println(rule)
+}
+
+func (r *RuleConfig) PrintRules() {
+	log.Println(r.RulesArray)
 }
