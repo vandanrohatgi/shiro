@@ -8,6 +8,7 @@
 - [x] create custom golang web server 
 - [x] rules regex file format 
 - [x] filter and block traffic based on rules
+- [] Convert current List of rules to Dictionary for faster lookup
 - [] Improve Blocking based on:
     - URI
     - Body

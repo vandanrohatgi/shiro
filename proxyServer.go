@@ -1,16 +1,17 @@
 package main
 
 import (
-	"io"
 	"log"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
+	"os"
 )
 
-var webServerUrl string = "https://httpbin.org/"
+// var webServerUrl string = "https://httpbin.org/"
+var webServerUrl string = "http://localhost:8888"
 var proxyServerPort string = ":8080"
-var rules RuleConfig = RuleConfig{Path: "./rules.yaml"}
+var rules RuleConfig
 
 type SimpleProxy struct {
 	Proxy *httputil.ReverseProxy
@@ -18,16 +19,12 @@ type SimpleProxy struct {
 
 func init() {
 	log.Println("Initialising...")
-	rules.IngestRules()
-}
-
-func isInURL(toCheck string) bool {
-	for _, i := range rules.RulesArray {
-		if toCheck == i.Path {
-			return true
-		}
+	if Path, ok := os.LookupEnv("SHIROPATH"); !ok {
+		rules.Path = "rules.yaml"
+	} else {
+		rules.Path = Path
 	}
-	return false
+	rules.IngestRules()
 }
 
 func NewProxy(urlRaw string) (*SimpleProxy, error) {
@@ -37,14 +34,14 @@ func NewProxy(urlRaw string) (*SimpleProxy, error) {
 		return nil, err
 	}
 	s := &SimpleProxy{httputil.NewSingleHostReverseProxy(origin)}
-	//   // Modify requests
+	// Modify requests
 	// originalDirector := s.Proxy.Director
 	// s.Proxy.Director = func(r *http.Request) {
 	// 	originalDirector(r)
 	// 	r.Header.Set("Some-Header", "Some Value")
 	// }
 
-	// Modify response
+	// // Modify response
 	// s.Proxy.ModifyResponse = func(r *http.Response) error {
 	// 	// Add a response header
 	// 	r.Header.Set("Server", "CodeDodle")
@@ -55,17 +52,13 @@ func NewProxy(urlRaw string) (*SimpleProxy, error) {
 }
 
 func (s *SimpleProxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	// Do anything you want here
-	// e.g. blacklisting IP, log time, modify headers, etc
-	if isInURL(r.RequestURI) {
-		io.Copy(io.Discard, r.Body)
-		defer r.Body.Close()
-		http.Error(w, "Forbidden", http.StatusForbidden)
-	}
-	log.Printf("Proxy receives request.")
-	log.Printf("Proxy forwards request to origin.")
-	// s.Proxy.ServeHTTP(w, r)
-	log.Printf("Origin server completes request.")
+	log.Print(r.RequestURI)
+	// if IsInURL(r.RequestURI) {
+	// 	io.Copy(io.Discard, r.Body)
+	// 	defer r.Body.Close()
+	// 	http.Error(w, "Forbidden", http.StatusForbidden)
+	// }
+	s.Proxy.ServeHTTP(w, r)
 }
 
 func main() {

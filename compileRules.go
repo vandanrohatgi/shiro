@@ -9,7 +9,7 @@ import (
 
 type Rules struct {
 	Path                string `yaml:"path"`
-	AllowPatternURL     string `yaml:"allowPatternURL"`
+	AllowPatternURI     string `yaml:"allowPatternURI"`
 	AllowPatternBody    string `yaml:"allowPatternBody"`
 	AllowPatternHeaders string `yaml:"allowPatternHeaders"`
 	Method              string `yaml:"method"`

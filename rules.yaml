@@ -1,13 +1,13 @@
-- path: /
-  allowPatternURL: .*
+/:
+  allowPatternURI: .*
   allowPatternBody: .*
   allowPatternHeaders: .*
   method: ''
   description: '' 
   meta: ''
   
-- path: /home
-  allowPatternURL: .*
+/home:
+  allowPatternURI: .*
   allowPatternBody: .*
   allowPatternHeaders: .*
   method: GET
