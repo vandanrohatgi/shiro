@@ -1,5 +1,9 @@
 # shiro_waf
 
+A white list based firewall. Why? Because I have seen how much effort and time is gone into setup black list rules, improving them, taking care of bypasses. Oh Im tired of the bypasses.
+
+Also I wanted to learn GO.
+
 ## Todo
 
 - [x] test web server 

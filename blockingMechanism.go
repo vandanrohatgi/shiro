@@ -1,10 +1,10 @@
 package main
 
-func IsInURI(toCheck string) (string, bool) {
+func IsInURI(toCheck string) (Rules, bool) {
 	for _, i := range rules.RulesArray {
 		if toCheck == i.Path {
-			return i.AllowPatternURI, true
+			return i, true
 		}
 	}
-	return "", false
+	return Rules{AllowPatternURI: ".*", AllowPatternBody: ".*", AllowPatternHeaders: ".*"}, false
 }
