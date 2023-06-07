@@ -4,22 +4,21 @@ import (
 	"flag"
 	"log"
 	"net/http"
-	"os"
 )
 
-var targetURL, proxyPort string
+var targetURL, proxyPort, path string
 
 func init() {
 	log.Println("Initialising...")
-	if Path, ok := os.LookupEnv("SHIROPATH"); !ok {
-		rules.Path = "rules.yaml"
-	} else {
-		rules.Path = Path
-	}
-	rules.IngestRules()
+
 	flag.StringVar(&targetURL, "targetURL", "http://localhost:8888", "URL to proxy")
 	flag.StringVar(&proxyPort, "proxyPort", "8080", "port to host the proxy")
+	flag.StringVar(&path, "path", "rules.yaml", "path to the rules file")
 	flag.Parse()
+
+	rules.Path = path
+	rules.IngestRules()
+
 }
 
 func main() {

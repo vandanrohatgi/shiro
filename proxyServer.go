@@ -40,10 +40,11 @@ func NewProxy(urlRaw string) (*SimpleProxy, error) {
 
 func (s *SimpleProxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	log.Print(r.RequestURI)
-	// if IsInURL(r.RequestURI) {
-	// 	io.Copy(io.Discard, r.Body)
-	// 	defer r.Body.Close()
-	// 	http.Error(w, "Forbidden", http.StatusForbidden)
-	// }
+	if rule, ok := IsInURI(r.RequestURI); ok {
+		AnalyzeRequest(r, &rule)
+	} else {
+		// block by default
+		BlockRequest(&w)
+	}
 	s.Proxy.ServeHTTP(w, r)
 }

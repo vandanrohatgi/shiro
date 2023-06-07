@@ -1,7 +1,7 @@
 - path: /
-  allowPatternURI: .*
-  allowPatternBody: .*
-  allowPatternHeaders: .*
+  allowPatternURI: ''
+  allowPatternBody: ''
+  allowPatternHeaders: ''
   method: ''
   description: '' 
   meta: ''
