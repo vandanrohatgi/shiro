@@ -1,4 +1,4 @@
-# シロワフ
+# Shiro WAF シロワフ शिरो वाफ 
 
 A white list based firewall. Why? Because I have seen how much effort and time is gone into setup black list rules, improving them, taking care of bypasses. Oh Im tired of the bypasses.
 
@@ -25,4 +25,8 @@ Also I wanted to learn GO.
 - [] host the the firewall (ngrok / AWS)
 - [] GUI using maybe dart/kotlin/javascript
 
-Absolute **CHAD** of an article: https://www.codedodle.com/go-reverse-proxy-example.html
+### Kudos
+
+1. Absolute **CHAD** of an article: https://www.codedodle.com/go-reverse-proxy-example.html
+2. Chat GPT (I'm not kidding)
+3. [Charm](https://charm.sh/) (That website tho o_o)

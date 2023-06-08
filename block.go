@@ -11,10 +11,6 @@ func IsInURI(toCheck string) (Rules, bool) {
 	return rules.RulesArray[0], false
 }
 
-func BlockRequest(w *http.ResponseWriter) {
-	http.Error(*w, "Forbidden", http.StatusForbidden)
-}
-
 func AnalyzeRequest(r *http.Request, rule *Rules) bool {
 	// TODO regex match over all the fields
 	//regexp.Match(rule.)

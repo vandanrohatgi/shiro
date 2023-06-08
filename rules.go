@@ -8,13 +8,12 @@ import (
 )
 
 type Rules struct {
-	Path                string `yaml:"path"`
-	AllowPatternURI     string `yaml:"allowPatternURI"`
-	AllowPatternBody    string `yaml:"allowPatternBody"`
-	AllowPatternHeaders string `yaml:"allowPatternHeaders"`
-	Method              string `yaml:"method"`
-	Description         string `yaml:"description"`
-	Meta                string `yaml:"meta"`
+	URI         string `yaml:"URI"`
+	Body        string `yaml:"body"`
+	Headers     string `yaml:"headers"`
+	Method      string `yaml:"method"`
+	Description string `yaml:"description"`
+	Meta        string `yaml:"meta"`
 }
 
 type RuleConfig struct {

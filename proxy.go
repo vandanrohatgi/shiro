@@ -1,10 +1,12 @@
 package main
 
 import (
-	"log"
+	"io"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
+
+	"github.com/charmbracelet/log"
 )
 
 // var webServerUrl string = "https://httpbin.org/"
@@ -39,12 +41,22 @@ func NewProxy(urlRaw string) (*SimpleProxy, error) {
 }
 
 func (s *SimpleProxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	log.Print(r.RequestURI)
+	var isBlocked bool
+	log.Info(r.RequestURI)
 	if rule, ok := IsInURI(r.RequestURI); ok {
-		AnalyzeRequest(r, &rule)
+		//AnalyzeRequest(r, &rule)
+		log.Print(rule)
+
 	} else {
 		// block by default
-		BlockRequest(&w)
+		isBlocked = true
 	}
-	s.Proxy.ServeHTTP(w, r)
+	if isBlocked {
+		io.Copy(io.Discard, r.Body)
+		defer r.Body.Close()
+		http.Error(w, "Forbidden", http.StatusForbidden)
+		log.Error("Request blocked")
+	} else {
+		s.Proxy.ServeHTTP(w, r)
+	}
 }

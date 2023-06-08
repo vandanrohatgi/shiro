@@ -2,16 +2,17 @@ package main
 
 import (
 	"flag"
-	"log"
 	"net/http"
+
+	"github.com/charmbracelet/log"
 )
 
 var targetURL, proxyPort, path string
 
 func init() {
-	log.Println("Initialising...")
+	log.Info("Initialising...")
 
-	flag.StringVar(&targetURL, "targetURL", "http://localhost:8888", "URL to proxy")
+	flag.StringVar(&targetURL, "targetURL", "https://httpbin.org/", "URL to proxy")
 	flag.StringVar(&proxyPort, "proxyPort", "8080", "port to host the proxy")
 	flag.StringVar(&path, "path", "rules.yaml", "path to the rules file")
 	flag.Parse()
@@ -23,7 +24,7 @@ func init() {
 
 func main() {
 	rules.PrintRules()
-	log.Println("Starting Proxy...")
+	log.Info("Starting Proxy...")
 	proxy, err := NewProxy(targetURL)
 	if err != nil {
 		log.Fatal("Error creating proxy", err)
