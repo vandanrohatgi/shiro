@@ -1,18 +1,34 @@
 package main
 
-import "net/http"
+import (
+	"io"
+	"log"
+	"net/http"
+	"regexp"
+)
 
 func IsInURI(toCheck string) (Rules, bool) {
 	for _, i := range rules.RulesArray {
-		if toCheck == i.Path {
+		if ok, _ := regexp.Match(i.URI, []byte(toCheck)); ok {
 			return i, true
 		}
 	}
-	return rules.RulesArray[0], false
+	return Rules{}, false
 }
 
-func AnalyzeRequest(r *http.Request, rule *Rules) bool {
+func IsRequestBlocked(r *http.Request, rule *Rules) bool {
 	// TODO regex match over all the fields
-	//regexp.Match(rule.)
+	// Check Body
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		log.Fatal("Not able to read body of the request", err)
+	}
+	if ok, _ := regexp.Match(rule.Body, body); !ok {
+		return true
+	}
+	// check headers
+	// if ok,_:=regexp.Match(rule.Headers,[]byte(r.Header[][]));ok{
+	// 	return true
+	// }
 	return false
 }

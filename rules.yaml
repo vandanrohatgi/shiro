@@ -1,20 +1,20 @@
-- URI: .*
+- URI: ^/$
   body: .*
   headers: .*
   method: .*
   description: 'Allow Everything' 
   meta: 'rule 1'
 
-- URI: ''
-  body: ''
-  headers: ''
-  method: ''
-  description: 'Deny Everything' 
-  meta: 'rule 2'
+# - URI: .*
+#   body: ''
+#   headers: ''
+#   method: ''
+#   description: 'Deny Everything' 
+#   meta: 'rule 2'
 
 - URI: /get
   body: .*
   headers: .*
   method: GET
   description: 'Allow GET request to /get endpoint' 
-  meta:  'rule 2'
+  meta:  'rule 3'
