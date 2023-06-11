@@ -45,7 +45,7 @@ func (s *SimpleProxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	log.Info(r.RequestURI)
 	if rule, ok := IsInURI(r.RequestURI); ok {
 		isBlocked = IsRequestBlocked(r, &rule)
-		log.Print(rule)
+		log.Debug(rule)
 
 	} else {
 		// block by default

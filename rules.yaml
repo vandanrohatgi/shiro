@@ -5,7 +5,7 @@
   description: 'Allow Everything' 
   meta: 'rule 1'
 
-# - URI: .*
+# - URI: /
 #   body: ''
 #   headers: ''
 #   method: ''
@@ -13,8 +13,22 @@
 #   meta: 'rule 2'
 
 - URI: /get
-  body: .*
+  body: ''
   headers: .*
   method: GET
   description: 'Allow GET request to /get endpoint' 
+  meta:  'rule 3'
+
+- URI: /forms/post
+  body: ''
+  headers: .*
+  method: GET
+  description: 'Allow POST request to /post endpoint' 
+  meta:  'rule 3'
+
+- URI: /post
+  body: .*
+  headers: .*
+  method: POST
+  description: 'Allow POST request to /post endpoint' 
   meta:  'rule 3'

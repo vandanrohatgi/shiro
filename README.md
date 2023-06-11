@@ -12,9 +12,9 @@ Also I wanted to learn GO.
 - [x] create custom golang web server 
 - [x] rules regex file format 
 - [x] filter and block traffic based on rules
-- [] Convert current List of rules to Dictionary for faster lookup
+- [] Convert current List of rules to Dictionary for faster lookup (not needed for now)
 - [] Improve Blocking based on:
-    - URI
+    - [x] URI
     - Body
     - parameters
     - headers
