@@ -27,7 +27,7 @@
   meta:  'rule 3'
 
 - URI: /post
-  body: .*
+  body: loolol
   headers: .*
   method: POST
   description: 'Allow POST request to /post endpoint' 

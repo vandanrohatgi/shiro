@@ -42,7 +42,7 @@ func NewProxy(urlRaw string) (*SimpleProxy, error) {
 
 func (s *SimpleProxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	var isBlocked bool
-	log.Info(r.RequestURI)
+	log.Info(r.Method, r.RequestURI)
 	if rule, ok := IsInURI(r.RequestURI); ok {
 		isBlocked = IsRequestBlocked(r, &rule)
 		log.Debug(rule)

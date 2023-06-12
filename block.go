@@ -2,9 +2,10 @@ package main
 
 import (
 	"io"
-	"log"
 	"net/http"
 	"regexp"
+
+	"github.com/charmbracelet/log"
 )
 
 func IsInURI(toCheck string) (Rules, bool) {
@@ -20,6 +21,7 @@ func IsRequestBlocked(r *http.Request, rule *Rules) bool {
 	// TODO regex match over all the fields
 	// Check Body
 	body, err := io.ReadAll(r.Body)
+	log.Debug(r.Header, string(body[:]))
 	if err != nil {
 		log.Fatal("Not able to read body of the request", err)
 	}
