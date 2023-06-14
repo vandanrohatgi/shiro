@@ -1,10 +1,13 @@
 package main
 
 import (
+	"context"
 	"io"
+	"net"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
+	"time"
 
 	"github.com/charmbracelet/log"
 )
@@ -13,16 +16,21 @@ import (
 var rules RuleConfig
 
 type SimpleProxy struct {
-	Proxy *httputil.ReverseProxy
+	Proxy   *httputil.ReverseProxy
+	Timeout time.Duration
 }
 
-func NewProxy(urlRaw string) (*SimpleProxy, error) {
+func NewProxy(urlRaw string, timeout time.Duration) (*SimpleProxy, error) {
 
 	origin, err := url.Parse(urlRaw)
 	if err != nil {
 		return nil, err
 	}
-	s := &SimpleProxy{httputil.NewSingleHostReverseProxy(origin)}
+	return &SimpleProxy{
+		Proxy:   httputil.NewSingleHostReverseProxy(origin),
+		Timeout: timeout,
+	}, nil
+
 	// Modify requests
 	// originalDirector := s.Proxy.Director
 	// s.Proxy.Director = func(r *http.Request) {
@@ -36,21 +44,35 @@ func NewProxy(urlRaw string) (*SimpleProxy, error) {
 	// 	r.Header.Set("Server", "CodeDodle")
 	// 	return nil
 	// }
-
-	return s, nil
 }
 
 func (s *SimpleProxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	var isBlocked bool
-	log.Info(r.Method, r.RequestURI)
-	if rule, ok := IsInURI(r.RequestURI); ok {
-		isBlocked = IsRequestBlocked(r, &rule)
-		log.Debug(rule)
 
-	} else {
-		// block by default
-		isBlocked = true
+	// Set the client for the reverse proxy
+	s.Proxy.Transport = &http.Transport{
+		DialContext:           (&net.Dialer{Timeout: s.Timeout}).DialContext,
+		MaxIdleConns:          100,
+		IdleConnTimeout:       90 * time.Second,
+		TLSHandshakeTimeout:   10 * time.Second,
+		ExpectContinueTimeout: s.Timeout,
 	}
+
+	// Update the request's context with the client's context
+	ctx := r.Context()
+	ctx, cancel := context.WithTimeout(ctx, s.Timeout)
+	defer cancel()
+	r = r.WithContext(ctx)
+
+	var isBlocked bool
+	// log.Info(r.Method, r.RequestURI)
+	// if rule, ok := IsInURI(r.RequestURI); ok {
+	// 	isBlocked = IsRequestBlocked(r, &rule)
+	// 	log.Debug(rule)
+
+	// } else {
+	// 	// block by default
+	// 	isBlocked = true
+	// }
 	if isBlocked {
 		io.Copy(io.Discard, r.Body)
 		defer r.Body.Close()

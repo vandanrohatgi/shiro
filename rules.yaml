@@ -1,9 +1,9 @@
-- URI: ^/$
-  body: .*
-  headers: .*
-  method: .*
-  description: 'Allow Everything' 
-  meta: 'rule 1'
+# - URI: ^/$
+#   body: .*
+#   headers: .*
+#   method: .*
+#   description: 'Allow Everything on index /' 
+#   meta: 'rule 1'
 
 # - URI: /
 #   body: ''
@@ -11,6 +11,12 @@
 #   method: ''
 #   description: 'Deny Everything' 
 #   meta: 'rule 2'
+- URI: /
+  body: .*
+  headers: .*
+  method: .*
+  description: 'Allow Everything on index /' 
+  meta: 'rule 1'
 
 - URI: /get
   body: ''

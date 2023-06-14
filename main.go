@@ -3,12 +3,14 @@ package main
 import (
 	"flag"
 	"net/http"
+	"time"
 
 	"github.com/charmbracelet/log"
 )
 
 var targetURL, proxyPort, path string
 var verbose bool
+var timeout int
 
 func init() {
 	log.Info("Initialising...")
@@ -17,6 +19,7 @@ func init() {
 	flag.StringVar(&proxyPort, "proxyPort", "8080", "port to host the proxy")
 	flag.StringVar(&path, "path", "rules.yaml", "path to the rules file")
 	flag.BoolVar(&verbose, "verbose", false, "Output all type of logs")
+	flag.IntVar(&timeout, "timeout", 5, "Timout for the proxy requests")
 	flag.Parse()
 
 	rules.Path = path
@@ -30,7 +33,7 @@ func init() {
 func main() {
 	rules.PrintRules()
 	log.Info("Starting Proxy...")
-	proxy, err := NewProxy(targetURL)
+	proxy, err := NewProxy(targetURL, time.Duration(timeout)*time.Second)
 	if err != nil {
 		log.Fatal("Error creating proxy", err)
 	}
