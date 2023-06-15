@@ -13,7 +13,9 @@
 #   meta: 'rule 2'
 - URI: /
   body: .*
-  headers: .*
+  headers: 
+    key: Host|accept-|fOO
+    value: bar
   method: .*
   description: 'Allow Everything on index /' 
   meta: 'rule 1'

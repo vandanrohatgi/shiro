@@ -8,9 +8,12 @@ import (
 )
 
 type Rules struct {
-	URI         string `yaml:"URI"`
-	Body        string `yaml:"body"`
-	Headers     string `yaml:"headers"`
+	URI     string `yaml:"URI"`
+	Body    string `yaml:"body"`
+	Headers struct {
+		Key   string `yaml:"key"`
+		Value string `yaml:"value"`
+	} `yaml:"headers"`
 	Method      string `yaml:"method"`
 	Description string `yaml:"description"`
 	Meta        string `yaml:"meta"`

@@ -47,6 +47,7 @@ func NewProxy(urlRaw string, timeout time.Duration) (*SimpleProxy, error) {
 }
 
 func (s *SimpleProxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	log.Info(r.Method, r.RequestURI)
 
 	// Set the client for the reverse proxy
 	s.Proxy.Transport = &http.Transport{
@@ -63,16 +64,13 @@ func (s *SimpleProxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	defer cancel()
 	r = r.WithContext(ctx)
 
-	var isBlocked bool
-	// log.Info(r.Method, r.RequestURI)
-	// if rule, ok := IsInURI(r.RequestURI); ok {
-	// 	isBlocked = IsRequestBlocked(r, &rule)
-	// 	log.Debug(rule)
+	var isBlocked bool = true // Block by default
 
-	// } else {
-	// 	// block by default
-	// 	isBlocked = true
-	// }
+	if rule, ok := IsInURI(r.RequestURI); ok {
+		isBlocked, _ = IsRequestBlocked(r, &rule)
+		log.Debug(rule)
+	}
+
 	if isBlocked {
 		io.Copy(io.Discard, r.Body)
 		defer r.Body.Close()
