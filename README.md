@@ -15,11 +15,12 @@ Also I wanted to learn GO.
 - [] Convert current List of rules to Dictionary for faster lookup (not needed for now)
 - [] Improve Blocking based on:
     - [x] URI
-    - Body
+    - [x] Body
     - parameters
-    - headers
-- [] auto generate rules file
-- [] expand from http protocol to multiple protocols
+    - headers (in progress)
+- [] Introduce monitoring mode (to inspect requests and create rule file) and blocking mode 
+- [] auto generate rules file (Not sure how I'll do it)
+- [] expand from http protocol to multiple protocols (maybe a whole new application is a better idea)
 - [] make the tool CI/CD friendly
 - [] dockerize
 - [] host the the firewall (ngrok / AWS)

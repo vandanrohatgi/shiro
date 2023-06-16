@@ -20,23 +20,23 @@
   description: 'Allow Everything on index /' 
   meta: 'rule 1'
 
-- URI: /get
-  body: ''
-  headers: .*
-  method: GET
-  description: 'Allow GET request to /get endpoint' 
-  meta:  'rule 3'
+# - URI: /get
+#   body: ''
+#   headers: .*
+#   method: GET
+#   description: 'Allow GET request to /get endpoint' 
+#   meta:  'rule 3'
 
-- URI: /forms/post
-  body: ''
-  headers: .*
-  method: GET
-  description: 'Allow POST request to /post endpoint' 
-  meta:  'rule 3'
+# - URI: /forms/post
+#   body: ''
+#   headers: .*
+#   method: GET
+#   description: 'Allow POST request to /post endpoint' 
+#   meta:  'rule 3'
 
-- URI: /post
-  body: loolol
-  headers: .*
-  method: POST
-  description: 'Allow POST request to /post endpoint' 
-  meta:  'rule 3'
+# - URI: /post
+#   body: loolol
+#   headers: .*
+#   method: POST
+#   description: 'Allow POST request to /post endpoint' 
+#   meta:  'rule 3'
