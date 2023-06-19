@@ -12,18 +12,21 @@ Also I wanted to learn GO.
 - [x] create custom golang web server 
 - [x] rules regex file format 
 - [x] filter and block traffic based on rules
-- [] Convert current List of rules to Dictionary for faster lookup (not needed for now)
+- [] Convert current List of rules to Dictionary for faster lookup (on hold, Will require change to rule format/ an initial conversion while ingesting)
 - [] Improve Blocking based on:
     - [x] URI
     - [x] Body
     - parameters
     - headers (in progress)
-- [] Introduce monitoring mode (to inspect requests and create rule file) and blocking mode 
+- [] monitoring mode (to inspect requests and create rule file)
+    - [] Pure Golang implementation (far into the future)
+    - [] Use an already built CLI tool to generate regexes
 - [] auto generate rules file (Not sure how I'll do it)
 - [] expand from http protocol to multiple protocols (maybe a whole new application is a better idea)
 - [] make the tool CI/CD friendly
 - [] dockerize
 - [] host the the firewall (ngrok / AWS)
+- [] Unit tests
 - [] GUI using maybe dart/kotlin/javascript
 
 ### Kudos
