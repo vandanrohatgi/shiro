@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/itchyny/rassemble-go"
 	"gopkg.in/yaml.v3"
 )
 
@@ -43,4 +44,12 @@ func (r *RuleConfig) IngestRules() {
 
 func (r *RuleConfig) PrintRules() {
 	log.Println(r.RulesArray)
+}
+
+func GenerateRegex(data []string) (string, error) {
+	pattern, err := rassemble.Join(data)
+	if err != nil {
+		return "", err
+	}
+	return pattern, nil
 }

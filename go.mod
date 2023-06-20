@@ -2,12 +2,15 @@ module github.com/vandanrohatgi/shiro_waf
 
 go 1.20
 
-require gopkg.in/yaml.v3 v3.0.1
+require (
+	github.com/charmbracelet/log v0.2.2
+	github.com/itchyny/rassemble-go v0.1.0
+	gopkg.in/yaml.v3 v3.0.1
+)
 
 require (
 	github.com/aymanbagabas/go-osc52/v2 v2.0.1 // indirect
 	github.com/charmbracelet/lipgloss v0.7.1 // indirect
-	github.com/charmbracelet/log v0.2.2 // indirect
 	github.com/go-logfmt/logfmt v0.6.0 // indirect
 	github.com/lucasb-eyer/go-colorful v1.2.0 // indirect
 	github.com/mattn/go-isatty v0.0.18 // indirect
