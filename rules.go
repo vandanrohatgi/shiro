@@ -1,3 +1,6 @@
+// This package handles:
+// - reading rules.yaml file
+// - Assocaited functions
 package main
 
 import (
@@ -7,6 +10,12 @@ import (
 	"github.com/itchyny/rassemble-go"
 	"gopkg.in/yaml.v3"
 )
+
+// Rules & RuleConfig are used to read rules from rules.yaml
+type RuleConfig struct {
+	Path       string
+	RulesArray []Rules
+}
 
 type Rules struct {
 	URI     string `yaml:"URI"`
@@ -20,17 +29,13 @@ type Rules struct {
 	Meta        string `yaml:"meta"`
 }
 
-type RuleConfig struct {
-	Path       string
-	RulesArray []Rules
-}
-
-type RuleMethods interface {
+// Ruler contains methods associated with RuleConfig type
+type Ruler interface {
 	IngestRules()
 	PrintRules()
-	GetInstance() RuleConfig
 }
 
+// IngestRules reads the rules.yaml file and unmarshal them to ruleconfig instance
 func (r *RuleConfig) IngestRules() {
 	yamlFile, err := os.ReadFile(r.Path)
 	if err != nil {
@@ -42,10 +47,13 @@ func (r *RuleConfig) IngestRules() {
 	}
 }
 
+// PrintRules is used for debugging purposes
+// Prints all the rules to stdout which were ingested on initializaition
 func (r *RuleConfig) PrintRules() {
 	log.Println(r.RulesArray)
 }
 
+// GenerateRegex takes a list of strings and returns a regular expression string
 func GenerateRegex(data []string) (string, error) {
 	pattern, err := rassemble.Join(data)
 	if err != nil {
