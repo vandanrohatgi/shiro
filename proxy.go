@@ -18,9 +18,10 @@ var rules RuleConfig
 type SimpleProxy struct {
 	Proxy   *httputil.ReverseProxy
 	Timeout time.Duration
+	Monitor bool
 }
 
-func NewProxy(urlRaw string, timeout time.Duration) (*SimpleProxy, error) {
+func NewProxy(urlRaw string, timeout time.Duration, monitor bool) (*SimpleProxy, error) {
 
 	origin, err := url.Parse(urlRaw)
 	if err != nil {
@@ -29,6 +30,7 @@ func NewProxy(urlRaw string, timeout time.Duration) (*SimpleProxy, error) {
 	return &SimpleProxy{
 		Proxy:   httputil.NewSingleHostReverseProxy(origin),
 		Timeout: timeout,
+		Monitor: monitor,
 	}, nil
 
 	// Modify requests
@@ -64,19 +66,33 @@ func (s *SimpleProxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	defer cancel()
 	r = r.WithContext(ctx)
 
-	var isBlocked bool = true // Block by default
+	// Check if URI has a rule for it
+	rule, ok := IsInURI(r.RequestURI)
 
-	if rule, ok := IsInURI(r.RequestURI); ok {
-		isBlocked, _ = IsRequestBlocked(r, &rule)
-		log.Debug(rule)
-	}
-
-	if isBlocked {
-		io.Copy(io.Discard, r.Body)
-		defer r.Body.Close()
-		http.Error(w, "Forbidden", http.StatusForbidden)
-		log.Error("Request blocked")
+	if s.Monitor {
+		if ok {
+			body, _ := io.ReadAll(r.Body)
+			rule.Body, _ = GenerateRegex([]string{rule.Body, string(body)})
+			// TODO for all fields such  as headers, and URI
+		} else {
+			// TODO generate for all fields
+		}
 	} else {
-		s.Proxy.ServeHTTP(w, r)
+		var isBlocked bool = true // Block by default
+
+		if ok {
+			isBlocked, _ = IsRequestBlocked(r, &rule)
+			log.Debug(rule)
+		}
+
+		if isBlocked {
+			io.Copy(io.Discard, r.Body)
+			defer r.Body.Close()
+			http.Error(w, "Forbidden", http.StatusForbidden)
+			log.Error("Request blocked")
+		} else {
+			s.Proxy.ServeHTTP(w, r)
+		}
 	}
+
 }

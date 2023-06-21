@@ -33,6 +33,7 @@ type Rules struct {
 type Ruler interface {
 	IngestRules()
 	PrintRules()
+	WriteRules()
 }
 
 // IngestRules reads the rules.yaml file and unmarshal them to ruleconfig instance
@@ -54,10 +55,25 @@ func (r *RuleConfig) PrintRules() {
 }
 
 // GenerateRegex takes a list of strings and returns a regular expression string
+// TODO create a custom library for better regex generation instead of current implemmentation
 func GenerateRegex(data []string) (string, error) {
 	pattern, err := rassemble.Join(data)
 	if err != nil {
 		return "", err
 	}
 	return pattern, nil
+}
+
+// WriteRules takes the RuleConfig struct and writes them to a yaml file.
+// This function is used during monitoring mode.
+func (r *RuleConfig) WriteRules() error {
+	rules, err := yaml.Marshal(r.RulesArray)
+	if err != nil {
+		return err
+	}
+	err = os.WriteFile(r.Path, rules, 0644)
+	if err != nil {
+		return err
+	}
+	return nil
 }
