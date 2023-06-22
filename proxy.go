@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"net/url"
+	"strings"
 	"time"
 
 	"github.com/charmbracelet/log"
@@ -67,21 +68,41 @@ func (s *SimpleProxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	r = r.WithContext(ctx)
 
 	// Check if URI has a rule for it
-	rule, ok := IsInURI(r.RequestURI)
+	ruleIndex, ok := IsInURI(r.RequestURI)
+	rule := rules.RulesArray[ruleIndex]
 
 	if s.Monitor {
-		if ok {
-			body, _ := io.ReadAll(r.Body)
-			rule.Body, _ = GenerateRegex([]string{rule.Body, string(body)})
-			// TODO for all fields such  as headers, and URI
-		} else {
-			// TODO generate for all fields
+		// Generate Regex for body
+		body, _ := io.ReadAll(r.Body)
+		rules.RulesArray[ruleIndex].Body, _ = GenerateRegex([]string{
+			rule.Body,
+			string(body),
+		})
+
+		// Generate Regex for headers
+		for header, value := range r.Header {
+			rules.RulesArray[ruleIndex].Headers.Key, _ = GenerateRegex([]string{
+				header,
+				rule.Headers.Key,
+			})
+			rules.RulesArray[ruleIndex].Headers.Value, _ = GenerateRegex([]string{
+				strings.Join(value, ","),
+				rule.Headers.Value,
+			})
 		}
+
+		//Generate Regex for Method
+		rules.RulesArray[ruleIndex].Method, _ = GenerateRegex([]string{
+			r.Method,
+			rule.Method,
+		})
+		// TODO: Write the updated rules to rule.path file
+		s.Proxy.ServeHTTP(w, r)
 	} else {
 		var isBlocked bool = true // Block by default
 
 		if ok {
-			isBlocked, _ = IsRequestBlocked(r, &rule)
+			isBlocked, _ = IsRequestBlocked(r, rule)
 			log.Debug(rule)
 		}
 

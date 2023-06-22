@@ -9,16 +9,18 @@ import (
 	"github.com/charmbracelet/log"
 )
 
-func IsInURI(toCheck string) (Rules, bool) {
-	for _, i := range rules.RulesArray {
-		if ok, _ := regexp.MatchString(i.URI, toCheck); ok {
+// IsInURI checks the incoming request URI with rules from rules.yaml if a rules exists for that URI
+// returns the index of the rule from rulesArray and bool for if a rule was found or not
+func IsInURI(toCheck string) (int, bool) {
+	for i, rule := range rules.RulesArray {
+		if ok, _ := regexp.MatchString(rule.URI, toCheck); ok {
 			return i, true
 		}
 	}
-	return Rules{}, false
+	return 0, false
 }
 
-func IsRequestBlocked(r *http.Request, rule *Rules) (bool, error) {
+func IsRequestBlocked(r *http.Request, rule Rules) (bool, error) {
 	// TODO regex match over all the fields
 	// Check Body
 	bodyDecision, err := checkBody(r, rule)
@@ -35,7 +37,7 @@ func IsRequestBlocked(r *http.Request, rule *Rules) (bool, error) {
 	return false, nil
 }
 
-func checkBody(r *http.Request, rule *Rules) (bool, error) {
+func checkBody(r *http.Request, rule Rules) (bool, error) {
 	body, err := io.ReadAll(r.Body)
 	log.Debug(string(body[:]))
 	if err != nil {
@@ -47,7 +49,7 @@ func checkBody(r *http.Request, rule *Rules) (bool, error) {
 	return false, nil
 }
 
-func checkHeaders(r *http.Request, rule *Rules) (bool, error) {
+func checkHeaders(r *http.Request, rule Rules) (bool, error) {
 	log.Debug(r.Header)
 	for key, value := range r.Header {
 		valueString := strings.Join(value, ",")

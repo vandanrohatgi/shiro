@@ -55,8 +55,8 @@ func (r *RuleConfig) PrintRules() {
 }
 
 // GenerateRegex takes a list of strings and returns a regular expression string
-// TODO create a custom library for better regex generation instead of current implemmentation
 func GenerateRegex(data []string) (string, error) {
+	// TODO: create a custom library for better regex generation instead of current implemmentation
 	pattern, err := rassemble.Join(data)
 	if err != nil {
 		return "", err
