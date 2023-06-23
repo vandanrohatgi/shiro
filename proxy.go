@@ -67,36 +67,71 @@ func (s *SimpleProxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	defer cancel()
 	r = r.WithContext(ctx)
 
+	// TODO: improve and optimize the code below. Looks like we cn write some functions to stop being redundant
 	// Check if URI has a rule for it
+	var rule Rules
 	ruleIndex, ok := IsInURI(r.RequestURI)
-	rule := rules.RulesArray[ruleIndex]
+	if ok {
+		rule = rules.RulesArray[ruleIndex]
+	}
 
 	if s.Monitor {
-		// Generate Regex for body
-		body, _ := io.ReadAll(r.Body)
-		rules.RulesArray[ruleIndex].Body, _ = GenerateRegex([]string{
-			rule.Body,
-			string(body),
-		})
+		if ok {
+			// Generate Regex for body
+			body, _ := io.ReadAll(r.Body)
+			rules.RulesArray[ruleIndex].Body, _ = GenerateRegex([]string{
+				rule.Body,
+				string(body),
+			})
 
-		// Generate Regex for headers
-		for header, value := range r.Header {
-			rules.RulesArray[ruleIndex].Headers.Key, _ = GenerateRegex([]string{
-				header,
-				rule.Headers.Key,
+			// Generate Regex for headers
+			for header, value := range r.Header {
+				rules.RulesArray[ruleIndex].Headers.Key, _ = GenerateRegex([]string{
+					header,
+					rule.Headers.Key,
+				})
+				rules.RulesArray[ruleIndex].Headers.Value, _ = GenerateRegex([]string{
+					strings.Join(value, ","),
+					rule.Headers.Value,
+				})
+			}
+
+			//Generate Regex for Method
+			rules.RulesArray[ruleIndex].Method, _ = GenerateRegex([]string{
+				r.Method,
+				rule.Method,
 			})
-			rules.RulesArray[ruleIndex].Headers.Value, _ = GenerateRegex([]string{
-				strings.Join(value, ","),
-				rule.Headers.Value,
+		} else {
+			// Generate URI Regex
+
+			rule.URI, _ = GenerateRegex([]string{
+				r.RequestURI,
 			})
+
+			// Generate Regex for body
+			body, _ := io.ReadAll(r.Body)
+			rule.Body, _ = GenerateRegex([]string{
+				string(body),
+			})
+
+			// Generate Regex for headers
+			for header, value := range r.Header {
+				rule.Headers.Key, _ = GenerateRegex([]string{
+					header,
+				})
+				rule.Headers.Value, _ = GenerateRegex([]string{
+					strings.Join(value, ","),
+				})
+			}
+
+			//Generate Regex for Method
+			rule.Method, _ = GenerateRegex([]string{
+				r.Method,
+			})
+
+			rules.RulesArray = append(rules.RulesArray, rule)
 		}
 
-		//Generate Regex for Method
-		rules.RulesArray[ruleIndex].Method, _ = GenerateRegex([]string{
-			r.Method,
-			rule.Method,
-		})
-		// TODO: Write the updated rules to rule.path file
 		s.Proxy.ServeHTTP(w, r)
 	} else {
 		var isBlocked bool = true // Block by default
