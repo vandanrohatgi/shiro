@@ -71,13 +71,13 @@ func (s *SimpleProxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// TODO: improve and optimize the code below. Looks like we cn write some functions to stop being redundant
 	// Check if URI has a rule for it
 	var rule Rules
-	ruleIndex, ok := IsInURI(r.RequestURI)
-	if ok {
+	ruleIndex, ruleExists := IsInURI(r.RequestURI)
+	if ruleExists {
 		rule = rules.RulesArray[ruleIndex]
 	}
 
 	if s.Monitor {
-		if ok {
+		if ruleExists {
 			// Generate Regex for body
 			body, _ := io.ReadAll(r.Body)
 			rules.RulesArray[ruleIndex].Body, _ = GenerateRegex([]string{
@@ -133,17 +133,20 @@ func (s *SimpleProxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		s.Proxy.ServeHTTP(w, r)
 	} else {
 		var isBlocked bool = true // Block by default
+		var err error
 
-		if ok {
-			isBlocked, _ = IsRequestBlocked(r, rule)
-			log.Debug(rule)
+		if ruleExists {
+			isBlocked, err = IsRequestBlocked(r, rule)
+			if err != nil {
+				log.Error("Request blocked", err)
+			}
 		}
 
 		if isBlocked {
 			io.Copy(io.Discard, r.Body)
 			defer r.Body.Close()
 			http.Error(w, "Forbidden", http.StatusForbidden)
-			log.Error("Request blocked")
+
 		} else {
 			s.Proxy.ServeHTTP(w, r)
 		}
