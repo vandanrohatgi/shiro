@@ -1,8 +1,56 @@
-- URI: /
+- URI: ^/$
   body: (?:)
   headers:
-    key: Referer|Sec-Fetch-Site|Connection|Accept
-    value: http://localhost:8080/|same-origin|keep-alive|image/avif,image/webp,*/*
+    key: Accept
+    value: text/html,application/xhtml+xml,application/xml;q=0(?-s:.)9,image/avif,image/webp,*/*;q=0(?-s:.)8
   method: GET
+  description: ""
+  meta: ""
+- URI: ^/flasgger_static/swagger-ui.css$
+  body: (?:)
+  headers:
+    key: Accept-Encoding
+    value: gzip, deflate, br
+  method: GET
+  description: ""
+  meta: ""
+- URI: ^/flasgger_static/swagger-ui-bundle.js$
+  body: (?:)
+  headers:
+    key: Accept-Encoding
+    value: gzip, deflate, br
+  method: GET
+  description: ""
+  meta: ""
+- URI: ^/flasgger_static/lib/jquery.min.js$
+  body: (?:)
+  headers:
+    key: Referer
+    value: http://localhost:8080/
+  method: GET
+  description: ""
+  meta: ""
+- URI: ^/flasgger_static/swagger-ui-standalone-preset.js$
+  body: (?:)
+  headers:
+    key: Referer
+    value: http://localhost:8080/
+  method: GET
+  description: ""
+  meta: ""
+- URI: ^/spec.json$
+  body: (?:)
+  headers:
+    key: Sec-Fetch-Mode
+    value: cors
+  method: GET
+  description: ""
+  meta: ""
+- URI: ^/put$
+  body: (?:)
+  headers:
+    key: Sec-Fetch-Dest
+    value: empty
+  method: PUT
   description: ""
   meta: ""

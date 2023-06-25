@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"io"
 	"net"
 	"net/http"
@@ -103,10 +104,7 @@ func (s *SimpleProxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			})
 		} else {
 			// Generate URI Regex
-
-			rule.URI, _ = GenerateRegex([]string{
-				r.RequestURI,
-			})
+			rule.URI = fmt.Sprintf("^%s$", r.RequestURI)
 
 			// Generate Regex for body
 			body, _ := io.ReadAll(r.Body)
