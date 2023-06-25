@@ -22,6 +22,12 @@ func IsInURI(toCheck string) (int, bool) {
 
 func IsRequestBlocked(r *http.Request, rule Rules) (bool, error) {
 	// TODO regex match over all the fields
+	// Check method
+
+	methodDecision, err := checkMethod(r, rule)
+	if err != nil || methodDecision {
+		return true, err
+	}
 	// Check Body
 	bodyDecision, err := checkBody(r, rule)
 	if err != nil || bodyDecision {
@@ -34,6 +40,13 @@ func IsRequestBlocked(r *http.Request, rule Rules) (bool, error) {
 		return true, err
 	}
 
+	return false, nil
+}
+
+func checkMethod(r *http.Request, rule Rules) (bool, error) {
+	if ok, _ := regexp.MatchString(rule.Method, r.Method); !ok {
+		return true, nil
+	}
 	return false, nil
 }
 
