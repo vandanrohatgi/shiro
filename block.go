@@ -44,6 +44,7 @@ func IsRequestBlocked(r *http.Request, rule Rules) (bool, error) {
 	return false, nil
 }
 
+// checkMethod takes the incoming request and the associated rule for making blocking decision
 func checkMethod(r *http.Request, rule Rules) (bool, error) {
 	if ok, err := regexp.MatchString(rule.Method, r.Method); !ok {
 		return true, fmt.Errorf("request method %s violates defined method %s", r.Method, rule.Method)
@@ -53,6 +54,7 @@ func checkMethod(r *http.Request, rule Rules) (bool, error) {
 	return false, nil
 }
 
+// checkBody takes the incoming request and the associated rule for making blocking decision
 func checkBody(r *http.Request, rule Rules) (bool, error) {
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
@@ -66,6 +68,7 @@ func checkBody(r *http.Request, rule Rules) (bool, error) {
 	return false, nil
 }
 
+// checkHeaders takes the incoming request and the associated rule for making blocking decision
 func checkHeaders(r *http.Request, rule Rules) (bool, error) {
 	log.Debug(r.Header)
 	for key, value := range r.Header {

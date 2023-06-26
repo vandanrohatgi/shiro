@@ -1,6 +1,6 @@
 // This package handles:
 // - reading rules.yaml file
-// - Assocaited functions
+// - Associated functions
 package main
 
 import (
@@ -32,7 +32,6 @@ type Rules struct {
 // Ruler contains methods associated with RuleConfig type
 type Ruler interface {
 	IngestRules()
-	PrintRules()
 	WriteRules()
 }
 
@@ -46,12 +45,6 @@ func (r *RuleConfig) IngestRules() {
 	if err != nil {
 		log.Fatal("Unable to extract rules", err)
 	}
-}
-
-// PrintRules is used for debugging purposes
-// Prints all the rules to stdout which were ingested on initializaition
-func (r *RuleConfig) PrintRules() {
-	log.Println(r.RulesArray)
 }
 
 // GenerateRegex takes a list of strings and returns a regular expression string

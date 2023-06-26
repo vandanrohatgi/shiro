@@ -23,6 +23,7 @@ type SimpleProxy struct {
 	Monitor bool
 }
 
+// NewProxy returns an instance of SimpleProxy struct with defined configurations.
 func NewProxy(urlRaw string, timeout time.Duration, monitor bool) (*SimpleProxy, error) {
 
 	origin, err := url.Parse(urlRaw)
@@ -34,20 +35,6 @@ func NewProxy(urlRaw string, timeout time.Duration, monitor bool) (*SimpleProxy,
 		Timeout: timeout,
 		Monitor: monitor,
 	}, nil
-
-	// Modify requests
-	// originalDirector := s.Proxy.Director
-	// s.Proxy.Director = func(r *http.Request) {
-	// 	originalDirector(r)
-	// 	r.Header.Set("Some-Header", "Some Value")
-	// }
-
-	// // Modify response
-	// s.Proxy.ModifyResponse = func(r *http.Response) error {
-	// 	// Add a response header
-	// 	r.Header.Set("Server", "CodeDodle")
-	// 	return nil
-	// }
 }
 
 func (s *SimpleProxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -69,6 +56,7 @@ func (s *SimpleProxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	r = r.WithContext(ctx)
 
 	// TODO: improve and optimize the code below. Looks like we cn write some functions to stop being redundant
+
 	// Check if URI has a rule for it
 	var rule Rules
 	ruleIndex, ruleExists := IsInURI(r.RequestURI)

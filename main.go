@@ -14,6 +14,7 @@ var targetURL, proxyPort, path string
 var verbose, monitor bool
 var timeout int
 
+// init performs CLI flags, reads the rule file for use and sets log level
 func init() {
 	flag.StringVar(&targetURL, "targetURL", "https://httpbin.org/", "URL to proxy")
 	flag.StringVar(&proxyPort, "proxyPort", "8080", "port to host the proxy")
@@ -30,22 +31,26 @@ func init() {
 		log.SetLevel(log.DebugLevel)
 	}
 
+	log.Debug("Ingested Rules: ", rules.RulesArray)
+
 }
 
 func main() {
+	// Goroutine when application is run in monitoring mode.
+	// To monitor for ctrl+c (SIGINT) and writes the monitored rules to a file.
+	if monitor {
+		go func() {
+			sigchan := make(chan os.Signal, 1)
+			signal.Notify(sigchan, os.Interrupt)
+			<-sigchan
+			log.Error("Initiating exit process...")
 
-	go func() {
-		sigchan := make(chan os.Signal, 1)
-		signal.Notify(sigchan, os.Interrupt)
-		<-sigchan
-		log.Error("Initiating exit process...")
+			rules.WriteRules()
 
-		rules.WriteRules()
+			os.Exit(0)
+		}()
+	}
 
-		os.Exit(0)
-	}()
-
-	rules.PrintRules()
 	log.Info("Starting Proxy...")
 	proxy, err := NewProxy(targetURL, time.Duration(timeout)*time.Second, monitor)
 	if err != nil {
