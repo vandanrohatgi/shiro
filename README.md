@@ -13,20 +13,21 @@ Also I wanted to learn GO.
 - [x] rules regex file format 
 - [x] filter and block traffic based on rules
 - [] Convert current List of rules to Dictionary for faster lookup (on hold, Will require change to rule format/ an initial conversion while ingesting)
-- [] Improve Blocking based on:
+- [x] Improve Blocking based on:
     - [x] URI
     - [x] Body
-    - parameters
-    - headers (in progress)
-- [] monitoring mode (to inspect requests and create rule file)
+    - [x] Method
+    - [x] headers
+- [x] monitoring mode (to inspect requests and create rule file)
     - [] Pure Golang implementation (far into the future)
-    - [] Use an already built CLI tool to generate regexes
-- [] auto generate rules file (Not sure how I'll do it)
+    - [x] Use an already built CLI tool to generate regexes
+- [x] auto generate rules file
 - [] expand from http protocol to multiple protocols (maybe a whole new application is a better idea)
 - [] make the tool CI/CD friendly
 - [] dockerize
 - [] host the the firewall (ngrok / AWS)
 - [] Unit tests
+- [] Documentation
 - [] GUI using maybe dart/kotlin/javascript
 
 ### Kudos
@@ -34,4 +35,5 @@ Also I wanted to learn GO.
 1. Absolute **CHAD** of an article: https://www.codedodle.com/go-reverse-proxy-example.html
 2. Chat GPT (I'm not kidding)
 3. [Charm](https://charm.sh/) (That website tho o_o)
-4. [Kenneth](https://kennethreitz.org/) for HTTPBin (which is my primary target for proxy)
+4. [Kenneth](https://kennethreitz.org/) for HTTPBin (which is my primary target for proxy testing)
+5. [itchyny](https://github.com/itchyny/) for the rassemble-go library
