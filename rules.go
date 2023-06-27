@@ -13,12 +13,12 @@ import (
 
 // Rules & RuleConfig are used to read rules from rules.yaml
 type RuleConfig struct {
-	Path       string
-	RulesArray []Rules
+	Path  string
+	Rules map[string]Rules
 }
 
 type Rules struct {
-	URI     string `yaml:"URI"`
+	//URI     string `yaml:"URI"`
 	Body    string `yaml:"body"`
 	Headers struct {
 		Key   string `yaml:"key"`
@@ -37,11 +37,12 @@ type Ruler interface {
 
 // IngestRules reads the rules.yaml file and unmarshal them to ruleconfig instance
 func (r *RuleConfig) IngestRules() {
+	//rules := make(map[string]Rules)
 	yamlFile, err := os.ReadFile(r.Path)
 	if err != nil {
 		log.Fatal("Error reading file", r.Path, err)
 	}
-	err = yaml.Unmarshal(yamlFile, &r.RulesArray)
+	err = yaml.Unmarshal(yamlFile, &r.Rules)
 	if err != nil {
 		log.Fatal("Unable to extract rules", err)
 	}
@@ -60,7 +61,7 @@ func GenerateRegex(data []string) (string, error) {
 // WriteRules takes the RuleConfig struct and writes them to a yaml file.
 // This function is used during monitoring mode.
 func (r *RuleConfig) WriteRules() error {
-	rules, err := yaml.Marshal(r.RulesArray)
+	rules, err := yaml.Marshal(r.Rules)
 	if err != nil {
 		return err
 	}

@@ -13,6 +13,7 @@ import (
 var targetURL, proxyPort, path string
 var verbose, monitor bool
 var timeout int
+var ruleconfig RuleConfig
 
 // init performs CLI flags, reads the rule file for use and sets log level
 func init() {
@@ -25,13 +26,16 @@ func init() {
 	flag.Parse()
 
 	log.Info("Initialising...")
-	rules.Path = path
-	rules.IngestRules()
+	ruleconfig = RuleConfig{
+		Path:  path,
+		Rules: make(map[string]Rules),
+	}
+	ruleconfig.IngestRules()
 	if verbose {
 		log.SetLevel(log.DebugLevel)
 	}
 
-	log.Debug("Ingested Rules: ", rules.RulesArray)
+	log.Debug("Ingested Rules: ", ruleconfig.Rules)
 
 }
 

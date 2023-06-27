@@ -12,14 +12,14 @@ import (
 
 // IsInURI checks the incoming request URI with rules from rules.yaml if a rules exists for that URI
 // returns the index of the rule from rulesArray and bool for if a rule was found or not
-func IsInURI(toCheck string) (int, bool) {
-	for i, rule := range rules.RulesArray {
-		if ok, _ := regexp.MatchString(rule.URI, toCheck); ok {
-			return i, true
-		}
-	}
-	return 0, false
-}
+// func IsInURI(toCheck string) (int, bool) {
+// 	for i, rule := range rules.Rules {
+// 		if ok, _ := regexp.MatchString(rule.URI, toCheck); ok {
+// 			return i, true
+// 		}
+// 	}
+// 	return 0, false
+// }
 
 func IsRequestBlocked(r *http.Request, rule Rules) (bool, error) {
 	// Check method

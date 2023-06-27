@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"io"
 	"net"
 	"net/http"
@@ -16,6 +15,8 @@ import (
 
 // var webServerUrl string = "https://httpbin.org/"
 var rules RuleConfig
+var isBlocked bool = true // Block by default
+var err error
 
 type SimpleProxy struct {
 	Proxy   *httputil.ReverseProxy
@@ -60,89 +61,59 @@ func (s *SimpleProxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	defer cancel()
 	r = r.WithContext(ctx)
 
-	// TODO: improve and optimize the code below. Looks like we cn write some functions to stop being redundant
-
 	// Check if URI has a rule for it
-	var rule Rules
-	ruleIndex, ruleExists := IsInURI(r.RequestURI)
-	if ruleExists {
-		rule = rules.RulesArray[ruleIndex]
-	}
+	rule, ruleExists := ruleconfig.Rules[r.RequestURI]
 
-	if s.Monitor {
-		if ruleExists {
-			// Generate Regex for body
-			body, _ := io.ReadAll(r.Body)
-			rules.RulesArray[ruleIndex].Body, _ = GenerateRegex([]string{
-				rule.Body,
-				string(body),
-			})
-
-			// Generate Regex for headers
-			for header, value := range r.Header {
-				rules.RulesArray[ruleIndex].Headers.Key, _ = GenerateRegex([]string{
-					header,
-					rule.Headers.Key,
-				})
-				rules.RulesArray[ruleIndex].Headers.Value, _ = GenerateRegex([]string{
-					strings.Join(value, ","),
-					rule.Headers.Value,
-				})
-			}
-
-			//Generate Regex for Method
-			rules.RulesArray[ruleIndex].Method, _ = GenerateRegex([]string{
-				r.Method,
-				rule.Method,
-			})
-		} else {
-			// Generate URI Regex
-			rule.URI = fmt.Sprintf("^%s$", r.RequestURI)
-
-			// Generate Regex for body
-			body, _ := io.ReadAll(r.Body)
-			rule.Body, _ = GenerateRegex([]string{
-				string(body),
-			})
-
-			// Generate Regex for headers
-			for header, value := range r.Header {
-				rule.Headers.Key, _ = GenerateRegex([]string{
-					header,
-				})
-				rule.Headers.Value, _ = GenerateRegex([]string{
-					strings.Join(value, ","),
-				})
-			}
-
-			//Generate Regex for Method
-			rule.Method, _ = GenerateRegex([]string{
-				r.Method,
-			})
-
-			rules.RulesArray = append(rules.RulesArray, rule)
-		}
-
+	if monitor {
+		// If monitoring mode, inspect the request and update the rule accordingly
+		ruleconfig.Rules[r.RequestURI] = Monitor(r, rule)
 		s.Proxy.ServeHTTP(w, r)
-	} else {
-		var isBlocked bool = true // Block by default
-		var err error
+		return
+	}
 
-		if ruleExists {
-			isBlocked, err = IsRequestBlocked(r, rule)
-			if err != nil {
-				log.Error("Request blocked", err)
-			}
-		}
-
-		if isBlocked {
-			io.Copy(io.Discard, r.Body)
-			defer r.Body.Close()
-			http.Error(w, "Forbidden", http.StatusForbidden)
-
-		} else {
-			s.Proxy.ServeHTTP(w, r)
+	if ruleExists {
+		isBlocked, err = IsRequestBlocked(r, rule)
+		if err != nil {
+			log.Error("Request blocked", err)
 		}
 	}
 
+	// Blocking / Serving
+	if isBlocked {
+		io.Copy(io.Discard, r.Body)
+		defer r.Body.Close()
+		http.Error(w, "Forbidden", http.StatusForbidden)
+
+	} else {
+		s.Proxy.ServeHTTP(w, r)
+	}
+}
+
+func Monitor(r *http.Request, rule Rules) Rules {
+	// Generate Regex for body
+	body, _ := io.ReadAll(r.Body)
+	rule.Body, _ = GenerateRegex([]string{
+		rule.Body,
+		string(body),
+	})
+
+	// Generate Regex for headers
+	for header, value := range r.Header {
+		rule.Headers.Key, _ = GenerateRegex([]string{
+			header,
+			rule.Headers.Key,
+		})
+		rule.Headers.Value, _ = GenerateRegex([]string{
+			strings.Join(value, ","),
+			rule.Headers.Value,
+		})
+	}
+
+	//Generate Regex for Method
+	rule.Method, _ = GenerateRegex([]string{
+		r.Method,
+		rule.Method,
+	})
+
+	return rule
 }
