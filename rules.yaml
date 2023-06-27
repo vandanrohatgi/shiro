@@ -1,48 +1,48 @@
 - URI: ^/$
   body: (?:)
   headers:
-    key: Accept
-    value: text/html,application/xhtml+xml,application/xml;q=0(?-s:.)9,image/avif,image/webp,*/*;q=0(?-s:.)8
+    key: Sec-Fetch-(?:User|Mode)|Accept-Encoding|(?:User-Agen|Accep)t
+    value: ""
   method: GET
   description: ""
   meta: ""
 - URI: ^/flasgger_static/swagger-ui.css$
   body: (?:)
   headers:
-    key: Accept-Encoding
-    value: gzip, deflate, br
+    key: Sec-Fetch-Mode|Accept-Encoding
+    value: no-cors|gzip, deflate, br
   method: GET
   description: ""
   meta: ""
 - URI: ^/flasgger_static/swagger-ui-bundle.js$
   body: (?:)
   headers:
-    key: Accept-Encoding
-    value: gzip, deflate, br
+    key: If-Modified-Since|Accept-Encoding
+    value: Tue, 14 Jan 2020 07:34:22 GMT|gzip, deflate, br
   method: GET
   description: ""
   meta: ""
 - URI: ^/flasgger_static/lib/jquery.min.js$
   body: (?:)
   headers:
-    key: Referer
-    value: http://localhost:8080/
+    key: If-None-Match|Referer
+    value: '"1578987262(?-s:.)0-85578-751967236"|http://localhost:8080/'
   method: GET
   description: ""
   meta: ""
 - URI: ^/flasgger_static/swagger-ui-standalone-preset.js$
   body: (?:)
   headers:
-    key: Referer
-    value: http://localhost:8080/
+    key: If-Modified-Since|Referer
+    value: Tue, 14 Jan 2020 07:34:22 GMT|http://localhost:8080/
   method: GET
   description: ""
   meta: ""
 - URI: ^/spec.json$
   body: (?:)
   headers:
-    key: Sec-Fetch-Mode
-    value: cors
+    key: Connection|Sec-Fetch-Mode
+    value: keep-alive|cors
   method: GET
   description: ""
   meta: ""
@@ -52,5 +52,13 @@
     key: Sec-Fetch-Dest
     value: empty
   method: PUT
+  description: ""
+  meta: ""
+- URI: ^/favicon.ico$
+  body: (?:)
+  headers:
+    key: Sec-Fetch-Mode|Connection
+    value: no-cors|keep-alive
+  method: GET
   description: ""
   meta: ""

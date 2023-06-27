@@ -30,17 +30,14 @@ func NewProxy(urlRaw string, timeout time.Duration, monitor bool) (*SimpleProxy,
 	if err != nil {
 		return nil, err
 	}
-	return &SimpleProxy{
+	s := &SimpleProxy{
 		Proxy:   httputil.NewSingleHostReverseProxy(origin),
 		Timeout: timeout,
 		Monitor: monitor,
-	}, nil
-}
-
-func (s *SimpleProxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	log.Info(r.Method, r.RequestURI)
+	}
 
 	// Set the client for the reverse proxy
+	// Main job of this code is to set the timeout for connecting with target URL
 	s.Proxy.Transport = &http.Transport{
 		DialContext:           (&net.Dialer{Timeout: s.Timeout}).DialContext,
 		MaxIdleConns:          100,
@@ -48,8 +45,16 @@ func (s *SimpleProxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		TLSHandshakeTimeout:   10 * time.Second,
 		ExpectContinueTimeout: s.Timeout,
 	}
+	return s, nil
+}
+
+func (s *SimpleProxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	// Show incoming request info
+	log.Info(r.Method, r.RequestURI)
 
 	// Update the request's context with the client's context
+	// This code is for setting the time duration for the whole process of taking the request, connecting to target URL,
+	// receiving response, processing and returning proxy response to client.
 	ctx := r.Context()
 	ctx, cancel := context.WithTimeout(ctx, s.Timeout)
 	defer cancel()
