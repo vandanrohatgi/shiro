@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"context"
 	"io"
 	"net"
@@ -90,7 +91,9 @@ func (s *SimpleProxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 func Monitor(r *http.Request, rule Rules) Rules {
 	// Generate Regex for body
-	body, _ := io.ReadAll(r.Body)
+	body, _ := io.ReadAll(r.Body)                // read request body
+	r.Body = io.NopCloser(bytes.NewBuffer(body)) // Restore request body after reading it
+	defer r.Body.Close()
 	rule.Body, _ = GenerateRegex([]string{
 		rule.Body,
 		string(body),

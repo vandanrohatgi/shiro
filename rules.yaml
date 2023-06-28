@@ -9,8 +9,8 @@
 /favicon.ico:
     body: (?:)
     headers:
-        key: Sec-Fetch-(?:Mode|Site|Dest)|Referer|Connection|Accept(?:-Encoding|(?:-Language)?)|(?:User-Agent)?
-        value: no-cors|http://localhost:8080/forms/post|keep-alive|gzip, deflate, br|image(?:/avif,image/webp,*/*)?|same-origin|en-US,en;q=0(?-s:.)5|(?:Mozilla/5(?-s:.)0 (Windows NT 10(?-s:.)0; Win64; x64; rv:109(?-s:.)0) Gecko/20100101 Firefox/114(?-s:.)0)?
+        key: Accept(?:-(?:(?:)?Language|Encoding(?:))|(?:-Language)?)|Sec-Fetch-(?:(?:Sit|Mod|(?:)?Sit|Mod(?:))e|(?:)?Dest)|Referer|(?:User-Agent)?|Connection
+        value: image(?:/avif,image/webp,*/*)?|same-origin|no-cors|http://localhost:8080/(?:forms/)?post|en-US,en;q=0(?-s:.)5|gzip, deflate, br|(?:Mozilla/5(?-s:.)0 (Windows NT 10(?-s:.)0; Win64; x64; rv:109(?-s:.)0) Gecko/20100101 Firefox/114(?-s:.)0)?|keep-alive
     method: (?:GET)?
     description: ""
     meta: ""
@@ -57,8 +57,8 @@
 /post:
     body: (?:custname=abcd&custtel=&custemail=&size=small&topping=mushroom&delivery=&comments=)?
     headers:
-        key: Sec-Fetch-(?:Dest|User|(?:Sit|Mod)e)|U(?:pgrade-Insecure-Requests|ser-Agent)|Accept-(?:Language|Encoding)|Referer|Origin|Con(?:tent-(?:Length|Type)|nection)|(?:Accept)?
-        value: document|1|(?:en-US,en;q=0(?-s:.)5)?
+        key: Sec-Fetch-(?:User|(?:Sit|(?:)?Mod|Sit(?:))e|(?:)?Dest|(?:)?User)|Origin|U(?:(?:)?ser-Agent|pgrade-Insecure-Requests(?:)|(?:)?(?:pgrade-Insecure-Requests|ser-Agent))|Accept(?:-(?:Encoding|(?:)?Language|Encoding(?:))|(?:-(?:Language|Encoding))?)|Con(?:(?:)?nection|tent-(?:(?:)?Length|Type(?:)|(?:)?(?:Length|Type)))|Referer|(?:Accept)?
+        value: ""
     method: (?:POST)?
     description: ""
     meta: ""

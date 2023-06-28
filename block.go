@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
 	"io"
 	"net/http"
@@ -57,6 +58,8 @@ func checkMethod(r *http.Request, rule Rules) (bool, error) {
 // checkBody takes the incoming request and the associated rule for making blocking decision
 func checkBody(r *http.Request, rule Rules) (bool, error) {
 	body, err := io.ReadAll(r.Body)
+	r.Body = io.NopCloser(bytes.NewBuffer(body)) // Restore request body after reading it
+	defer r.Body.Close()
 	if err != nil {
 		return true, err
 	}
