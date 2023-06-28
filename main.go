@@ -49,8 +49,7 @@ func main() {
 			<-sigchan
 			log.Error("Initiating exit process...")
 
-			rules.WriteRules()
-
+			ruleconfig.WriteRules()
 			os.Exit(0)
 		}()
 	}

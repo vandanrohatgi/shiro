@@ -14,7 +14,6 @@ import (
 )
 
 // var webServerUrl string = "https://httpbin.org/"
-var rules RuleConfig
 var isBlocked bool = true // Block by default
 var err error
 
@@ -71,6 +70,7 @@ func (s *SimpleProxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Blocking mode
 	if ruleExists {
 		isBlocked, err = IsRequestBlocked(r, rule)
 		if err != nil {
@@ -78,7 +78,6 @@ func (s *SimpleProxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	// Blocking / Serving
 	if isBlocked {
 		io.Copy(io.Discard, r.Body)
 		defer r.Body.Close()
