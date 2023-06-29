@@ -6,6 +6,7 @@ package main
 import (
 	"log"
 	"os"
+	"regexp"
 
 	"github.com/itchyny/rassemble-go"
 	"gopkg.in/yaml.v3"
@@ -18,15 +19,18 @@ type RuleConfig struct {
 }
 
 type Rules struct {
-	//URI     string `yaml:"URI"`
-	Body    string `yaml:"body"`
-	Headers struct {
-		Key   string `yaml:"key"`
-		Value string `yaml:"value"`
+	Body      string        `yaml:"body"`
+	BodyRegex regexp.Regexp `yaml:"-"` // don't write these fields to rule file
+	Headers   struct {
+		Key        string        `yaml:"key"`
+		KeyRegex   regexp.Regexp `yaml:"-"`
+		Value      string        `yaml:"value"`
+		ValueRegex regexp.Regexp `yaml:"-"`
 	} `yaml:"headers"`
-	Method      string `yaml:"method"`
-	Description string `yaml:"description"`
-	Meta        string `yaml:"meta"`
+	Method      string        `yaml:"method"`
+	MethodRegex regexp.Regexp `yaml:"-"`
+	Description string        `yaml:"description"`
+	Meta        string        `yaml:"meta"`
 }
 
 // Ruler contains methods associated with RuleConfig type

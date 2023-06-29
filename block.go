@@ -5,22 +5,10 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"regexp"
 	"strings"
 
 	"github.com/charmbracelet/log"
 )
-
-// IsInURI checks the incoming request URI with rules from rules.yaml if a rules exists for that URI
-// returns the index of the rule from rulesArray and bool for if a rule was found or not
-// func IsInURI(toCheck string) (int, bool) {
-// 	for i, rule := range rules.Rules {
-// 		if ok, _ := regexp.MatchString(rule.URI, toCheck); ok {
-// 			return i, true
-// 		}
-// 	}
-// 	return 0, false
-// }
 
 func IsRequestBlocked(r *http.Request, rule Rules) (bool, error) {
 	// Check method
@@ -47,10 +35,8 @@ func IsRequestBlocked(r *http.Request, rule Rules) (bool, error) {
 
 // checkMethod takes the incoming request and the associated rule for making blocking decision
 func checkMethod(r *http.Request, rule Rules) (bool, error) {
-	if ok, err := regexp.MatchString(rule.Method, r.Method); !ok {
+	if !rule.MethodRegex.MatchString(r.Method) {
 		return true, fmt.Errorf("request method %s violates defined method %s", r.Method, rule.Method)
-	} else if err != nil {
-		return true, err
 	}
 	return false, nil
 }
@@ -60,14 +46,15 @@ func checkBody(r *http.Request, rule Rules) (bool, error) {
 	body, err := io.ReadAll(r.Body)
 	r.Body = io.NopCloser(bytes.NewBuffer(body)) // Restore request body after reading it
 	defer r.Body.Close()
+
 	if err != nil {
 		return true, err
 	}
-	if ok, err := regexp.Match(rule.Body, body); !ok {
+
+	if !rule.BodyRegex.MatchString(string(body)) {
 		return true, fmt.Errorf("request body %s violates defined body %s", string(body[:]), rule.Body)
-	} else if err != nil {
-		return true, err
 	}
+
 	return false, nil
 }
 
@@ -76,20 +63,13 @@ func checkHeaders(r *http.Request, rule Rules) (bool, error) {
 	log.Debug(r.Header)
 	for key, value := range r.Header {
 		valueString := strings.Join(value, ",")
-		keyOk, keyErr := regexp.MatchString(rule.Headers.Key, key)
-		valueOk, valErr := regexp.MatchString(rule.Headers.Value, valueString)
-		if !(keyOk || valueOk) {
+		if !rule.Headers.KeyRegex.MatchString(key) || !rule.Headers.ValueRegex.MatchString(valueString) {
 			return true, fmt.Errorf("request header %s:%s violates defined header %s:%s",
 				key,
 				value,
 				rule.Headers.Key,
 				rule.Headers.Value)
-		} else if keyErr != nil {
-			return true, keyErr
-		} else if valErr != nil {
-			return true, valErr
 		}
 	}
 	return false, nil
-
 }

@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"regexp"
 	"time"
 
 	"github.com/charmbracelet/log"
@@ -21,7 +22,7 @@ func init() {
 	flag.StringVar(&proxyPort, "proxyPort", "8080", "port to host the proxy")
 	flag.StringVar(&path, "path", "rules.yaml", "path to the rules file")
 	flag.BoolVar(&verbose, "verbose", false, "Output all type of logs")
-	flag.IntVar(&timeout, "timeout", 5, "Timout for the proxy requests")
+	flag.IntVar(&timeout, "timeout", 5, "Timeout for the proxy requests")
 	flag.BoolVar(&monitor, "monitor", false, "Monitor proxy traffic and generate regex automatically")
 	flag.Parse()
 
@@ -30,11 +31,21 @@ func init() {
 		Path:  path,
 		Rules: make(map[string]Rules),
 	}
+	log.Info("Reading rules...")
 	ruleconfig.IngestRules()
 	if verbose {
 		log.SetLevel(log.DebugLevel)
 	}
-
+	if !monitor {
+		log.Info("Compiling regex...")
+		for URI, rule := range ruleconfig.Rules {
+			rule.BodyRegex = *regexp.MustCompile(rule.Body)
+			rule.MethodRegex = *regexp.MustCompile(rule.Method)
+			rule.Headers.KeyRegex = *regexp.MustCompile(rule.Headers.Key)
+			rule.Headers.ValueRegex = *regexp.MustCompile(rule.Headers.Value)
+			ruleconfig.Rules[URI] = rule
+		}
+	}
 	log.Debug("Ingested Rules: ", ruleconfig.Rules)
 
 }

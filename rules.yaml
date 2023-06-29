@@ -1,72 +1,48 @@
 /:
     body: (?:)
     headers:
-        key: Sec-Fetch-(?:Sit|Mod)e|Connection|(?:Sec-Fetch-Des|Accep|User-Agen)t|Upgrade-Insecure-Requests|Accept-(?:Encoding|Language)|(?:Sec-Fetch-User)?
-        value: (?:non|navigat|keep-aliv)e|document|1|gzip, deflate, br|en-US,en;q=0(?-s:.)5|text/html,application/xhtml+xml,application/xml;q=0(?-s:.)9,image/avif,image/webp,*/*;q=0(?-s:.)8|(?:Mozilla/5(?-s:.)0 (Windows NT 10(?-s:.)0; Win64; x64; rv:109(?-s:.)0) Gecko/20100101 Firefox/114(?-s:.)0)?
+        key: U(?:ser-Agent|pgrade-Insecure-Requests)|Sec-Fetch-(?:User|Dest|(?:Sit|Mod)e)|Connection|Accept-(?:Language|Encoding)|(?:Accept)?
+        value: (?:Mozilla/5(?-s:.)0 (Windows NT 10(?-s:.)0; Win64; x64; rv:109(?-s:.)0) Gecko/20100101 Firefox/114(?-s:.)0)?
     method: (?:GET)?
     description: ""
     meta: ""
-/favicon.ico:
+/digest-auth/as/cd/1e:
     body: (?:)
     headers:
-        key: Accept(?:-(?:(?:)?Language|Encoding(?:))|(?:-Language)?)|Sec-Fetch-(?:(?:Sit|Mod|(?:)?Sit|Mod(?:))e|(?:)?Dest)|Referer|(?:User-Agent)?|Connection
-        value: image(?:/avif,image/webp,*/*)?|same-origin|no-cors|http://localhost:8080/(?:forms/)?post|en-US,en;q=0(?-s:.)5|gzip, deflate, br|(?:Mozilla/5(?-s:.)0 (Windows NT 10(?-s:.)0; Win64; x64; rv:109(?-s:.)0) Gecko/20100101 Firefox/114(?-s:.)0)?|keep-alive
-    method: (?:GET)?
-    description: ""
-    meta: ""
-/flasgger_static/lib/jquery.min.js:
-    body: (?:)
-    headers:
-        key: If-None-Match|Sec-Fetch-Dest|Referer|Connection|Accept(?:-Language|(?:-Encoding)?)|(?:If-Modified-Sinc|Sec-Fetch-(?:Sit|Mod))e|(?:User-Agent)?
-        value: '"1578987262(?-s:.)0-85578-751967236"|s(?:cript|ame-origin)|http://localhost:8080/|keep-alive|en-US,en;q=0(?-s:.)5|Tue, 14 Jan 2020 07:34:22 GMT|no-cors|(?:gzip, deflate, br)?'
-    method: (?:GET)?
-    description: ""
-    meta: ""
-/flasgger_static/swagger-ui-bundle.js:
-    body: (?:)
-    headers:
-        key: If-None-Match|(?:Sec-Fetch-(?:Sit|Mod)|Accept-Languag|If-Modified-Sinc)e|(?:Sec-Fetch-Des|User-Agen)t|Referer|Accept-Encoding|Connection|(?:Accept)?
-        value: '"1578987262(?-s:.)0-1428809-2223119662"|s(?:ame-origin|cript)|no-cors|http://localhost:8080/|gzip, deflate, br|en-US,en;q=0(?-s:.)5|Mozilla/5(?-s:.)0 (Windows NT 10(?-s:.)0; Win64; x64; rv:109(?-s:.)0) Gecko/20100101 Firefox/114(?-s:.)0|Tue, 14 Jan 2020 07:34:22 GMT|(?:keep-alive)?'
-    method: (?:GET)?
-    description: ""
-    meta: ""
-/flasgger_static/swagger-ui-standalone-preset.js:
-    body: (?:)
-    headers:
-        key: If-(?:Modified-Since|None-Match)|Sec-Fetch-(?:(?:Sit|Mod)e|Dest)|Accept(?:-Encoding|(?:-Language)?)|Referer|Connection|(?:User-Agent)?
-        value: Tue, 14 Jan 2020 07:34:22 GMT|s(?:ame-origin|cript)|no-cors|gzip, deflate, br|en-US,en;q=0(?-s:.)5|"1578987262(?-s:.)0-440437-3789627805"|http://localhost:8080/|(?:keep-alive)?
+        key: Accept-Encoding|(?:Accep|User-Agen)t|Sec-Fetch-(?:(?:Sit|Mod)e|Dest)|Connection|Referer|(?:Accept-Language)?
+        value: gzip, deflate, br|(?:application/jso|same-origi)n|empty|Mozilla/5(?-s:.)0 (Windows NT 10(?-s:.)0; Win64; x64; rv:109(?-s:.)0) Gecko/20100101 Firefox/114(?-s:.)0|cors|keep-alive|http://localhost:8080/|(?:en-US,en;q=0(?-s:.)5)?
     method: (?:GET)?
     description: ""
     meta: ""
 /flasgger_static/swagger-ui.css:
     body: (?:)
     headers:
-        key: (?:Sec-Fetch-Mod|Accept-Languag|Sec-Fetch-Sit)e|(?:Sec-Fetch-Des|Accep|User-Agen)t|Referer|Connection|(?:Accept-Encoding)?
-        value: no-cors|s(?:tyle|ame-origin)|http://localhost:8080/|keep-alive|en-US,en;q=0(?-s:.)5|text/css,*/*;q=0(?-s:.)1|Mozilla/5(?-s:.)0 (Windows NT 10(?-s:.)0; Win64; x64; rv:109(?-s:.)0) Gecko/20100101 Firefox/114(?-s:.)0|(?:gzip, deflate, br)?
-    method: (?:GET)?
-    description: ""
-    meta: ""
-/forms/post:
-    body: (?:)
-    headers:
-        key: Accept-Encoding|(?:Accept-Languag|Sec-Fetch-Mod)e|(?:Accep|Sec-Fetch-Des|User-Agen)t|Upgrade-Insecure-Requests|(?:Refer|Sec-Fetch-Us)er|Connection|(?:Sec-Fetch-Site)?
-        value: gzip, deflate, br|en-US,en;q=0(?-s:.)5|text/html,application/xhtml+xml,application/xml;q=0(?-s:.)9,image/avif,image/webp,*/*;q=0(?-s:.)8|(?:navigat|keep-aliv)e|1|document|http://localhost:8080/|(?:Mozilla/5(?-s:.)0 (Windows NT 10(?-s:.)0; Win64; x64; rv:109(?-s:.)0) Gecko/20100101 Firefox/114(?-s:.)0)?
+        key: Connection|Accept(?:-Language|(?:-Encoding)?)|Sec-Fetch-(?:(?:Sit|Mod)e|Dest)|Referer|(?:User-Agent)?
+        value: keep-alive|en-US,en;q=0(?-s:.)5|text/css,*/*;q=0(?-s:.)1|s(?:ame-origin|tyle)|no-cors|http://localhost:8080/|gzip, deflate, br|(?:Mozilla/5(?-s:.)0 (Windows NT 10(?-s:.)0; Win64; x64; rv:109(?-s:.)0) Gecko/20100101 Firefox/114(?-s:.)0)?
     method: (?:GET)?
     description: ""
     meta: ""
 /post:
-    body: (?:custname=abcd&custtel=&custemail=&size=small&topping=mushroom&delivery=&comments=)?
+    body: (?:)
     headers:
-        key: Sec-Fetch-(?:User|(?:Sit|(?:)?Mod|Sit(?:))e|(?:)?Dest|(?:)?User)|Origin|U(?:(?:)?ser-Agent|pgrade-Insecure-Requests(?:)|(?:)?(?:pgrade-Insecure-Requests|ser-Agent))|Accept(?:-(?:Encoding|(?:)?Language|Encoding(?:))|(?:-(?:Language|Encoding))?)|Con(?:(?:)?nection|tent-(?:(?:)?Length|Type(?:)|(?:)?(?:Length|Type)))|Referer|(?:Accept)?
-        value: ""
+        key: Content-Length|Sec-Fetch-Dest|(?:Origi|Connectio)n|Accept(?:-Encoding)?|(?:Sec-Fetch-(?:Sit|Mod)|Accept-Languag)e|Referer|(?:User-Agent)?
+        value: 0|e(?:mpty|n-US,en;q=0(?-s:.)5)|http://localhost:8080/?|gzip, deflate, br|(?:application/jso|same-origi)n|cors|keep-alive|(?:Mozilla/5(?-s:.)0 (Windows NT 10(?-s:.)0; Win64; x64; rv:109(?-s:.)0) Gecko/20100101 Firefox/114(?-s:.)0)?
     method: (?:POST)?
+    description: ""
+    meta: ""
+/put:
+    body: (?:)
+    headers:
+        key: Content-Length|Sec-Fetch-(?:(?:Sit|Mod)e|Dest)|Referer|Accept-(?:Encoding|Language)|User-Agent|(?:Connectio|Origi)n|(?:Accept)?
+        value: (?:Mozilla/5(?-s:.)0 (Windows NT 10(?-s:.)0; Win64; x64; rv:109(?-s:.)0) Gecko/20100101 Firefox/114(?-s:.)|http://localhost:808)?0|same-origin|http://localhost:8080/|gzip, deflate, br|e(?:n-US,en;q=0(?-s:.)5|mpty)|cors|keep-alive|(?:application/json)?
+    method: (?:PUT)?
     description: ""
     meta: ""
 /spec.json:
     body: (?:)
     headers:
-        key: Accept-(?:Language|Encoding)|(?:User-Agen|Accep|Sec-Fetch-Des)t|Sec-Fetch-(?:Sit|Mod)e|Referer|(?:Connection)?
-        value: en-US,en;q=0(?-s:.)5|Mozilla/5(?-s:.)0 (Windows NT 10(?-s:.)0; Win64; x64; rv:109(?-s:.)0) Gecko/20100101 Firefox/114(?-s:.)0|same-origin|cors|http://localhost:8080/|(?:gzip, deflate, br)?
+        key: Accept(?:-Encoding)?|User-Agent|Sec-Fetch-(?:(?:Sit|Mod)e|Dest)|Connection|Referer|(?:Accept-Language)?
+        value: ""
     method: (?:GET)?
     description: ""
     meta: ""
