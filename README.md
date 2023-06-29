@@ -12,7 +12,8 @@ Also I wanted to learn GO.
 - [x] create custom golang web server 
 - [x] rules regex file format 
 - [x] filter and block traffic based on rules
-- [x] Convert current List of rules to Dictionary for faster lookup 
+- [x] Convert current List of rules to Dictionary for faster lookup
+- [x] Pre-compile regex during initilisation
 - [x] Improve Blocking based on:
     - [x] URI
     - [x] Body
@@ -34,6 +35,6 @@ Also I wanted to learn GO.
 
 1. Absolute **CHAD** of an article: https://www.codedodle.com/go-reverse-proxy-example.html
 2. Chat GPT (I'm not kidding)
-3. [Charm](https://charm.sh/) (That website tho o_o)
+3. [Charm](https://charm.sh/) for their log library (That website tho o_o)
 4. [Kenneth](https://kennethreitz.org/) for HTTPBin (which is my primary target for proxy testing)
 5. [itchyny](https://github.com/itchyny/) for the rassemble-go library

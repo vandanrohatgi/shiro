@@ -51,7 +51,7 @@ func NewProxy(urlRaw string, timeout time.Duration, monitor bool) (*SimpleProxy,
 
 func (s *SimpleProxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// Show incoming request info
-	log.Info(r.Method, r.RequestURI)
+	log.Infof("%s %s", r.Method, r.RequestURI)
 
 	// Update the request's context with the client's context
 	// This code is for setting the time duration for the whole process of taking the request, connecting to target URL,
@@ -82,8 +82,8 @@ func (s *SimpleProxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if isBlocked {
 		io.Copy(io.Discard, r.Body)
 		defer r.Body.Close()
+		log.Errorf("Request blocked. No rule found for %s", r.RequestURI)
 		http.Error(w, "Forbidden", http.StatusForbidden)
-
 	} else {
 		s.Proxy.ServeHTTP(w, r)
 	}
