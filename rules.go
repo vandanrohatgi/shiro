@@ -23,18 +23,20 @@ type RuleConfig struct {
 }
 
 type Rules struct {
-	Body      string        `yaml:"body"`
-	BodyRegex regexp.Regexp `yaml:"-"` // don't write these fields to rule file
-	Headers   struct {
-		Key        string        `yaml:"key"`
-		KeyRegex   regexp.Regexp `yaml:"-"`
-		Value      string        `yaml:"value"`
-		ValueRegex regexp.Regexp `yaml:"-"`
-	} `yaml:"headers"`
+	Body        string        `yaml:"body"`
+	BodyRegex   regexp.Regexp `yaml:"-"` // don't write these fields to rule file
+	Headers     Headers       `yaml:"headers"`
 	Method      string        `yaml:"method"`
 	MethodRegex regexp.Regexp `yaml:"-"`
 	Description string        `yaml:"description"`
 	Meta        string        `yaml:"meta"`
+}
+
+type Headers struct {
+	Key        string        `yaml:"key"`
+	KeyRegex   regexp.Regexp `yaml:"-"`
+	Value      string        `yaml:"value"`
+	ValueRegex regexp.Regexp `yaml:"-"`
 }
 
 // Ruler contains methods associated with RuleConfig type
@@ -80,6 +82,9 @@ func (r *RuleConfig) WriteRules() error {
 	return nil
 }
 
+// InspectMethod inspects the request body, generates a new regex
+// from the previous regex and the new data.
+// Returns a new rule.
 func InspectBody(r *http.Request, rule Rules) Rules {
 	// Generate Regex for body
 	body, _ := io.ReadAll(r.Body)                // read request body
@@ -92,6 +97,9 @@ func InspectBody(r *http.Request, rule Rules) Rules {
 	return rule
 }
 
+// InspectMethod inspects the request headers, generates a new regex
+// from the previous regex and the new data.
+// Returns a new rule.
 func InspectHeaders(r *http.Request, rule Rules) Rules {
 	// Generate Regex for headers
 	for header, value := range r.Header {
@@ -107,6 +115,9 @@ func InspectHeaders(r *http.Request, rule Rules) Rules {
 	return rule
 }
 
+// InspectMethod inspects the request method, generates a new regex
+// from the previous regex and the new data.
+// Returns a new rule.
 func InspectMethod(r *http.Request, rule Rules) Rules {
 	//Generate Regex for Method
 	rule.Method, _ = GenerateRegex([]string{
