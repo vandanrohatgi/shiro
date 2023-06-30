@@ -1,14 +1,12 @@
 package main
 
 import (
-	"bytes"
 	"context"
-	"io"
 	"net"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
-	"strings"
+	"sync"
 	"time"
 
 	"github.com/charmbracelet/log"
@@ -17,11 +15,12 @@ import (
 // var webServerUrl string = "https://httpbin.org/"
 var isBlocked bool = true // Block by default
 var err error
+var mutex sync.Mutex
 
 type SimpleProxy struct {
-	Proxy   *httputil.ReverseProxy
-	Timeout time.Duration
-	Monitor bool
+	Proxy                 *httputil.ReverseProxy
+	Timeout               time.Duration
+	MonitoringModeEnabled bool
 }
 
 // NewProxy returns an instance of SimpleProxy struct with defined configurations.
@@ -32,9 +31,9 @@ func NewProxy(urlRaw string, timeout time.Duration, monitor bool) (*SimpleProxy,
 		return nil, err
 	}
 	s := &SimpleProxy{
-		Proxy:   httputil.NewSingleHostReverseProxy(origin),
-		Timeout: timeout,
-		Monitor: monitor,
+		Proxy:                 httputil.NewSingleHostReverseProxy(origin),
+		Timeout:               timeout,
+		MonitoringModeEnabled: monitor,
 	}
 
 	// Set the client for the reverse proxy
@@ -51,7 +50,7 @@ func NewProxy(urlRaw string, timeout time.Duration, monitor bool) (*SimpleProxy,
 
 func (s *SimpleProxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// Show incoming request info
-	log.Infof("%s %s", r.Method, r.RequestURI)
+	log.Infof("%s %s %s", r.RemoteAddr, r.Method, r.RequestURI)
 
 	// Update the request's context with the client's context
 	// This code is for setting the time duration for the whole process of taking the request, connecting to target URL,
@@ -64,58 +63,38 @@ func (s *SimpleProxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// Check if URI has a rule for it
 	rule, ruleExists := ruleconfig.Rules[r.RequestURI]
 
-	if monitor {
-		// If monitoring mode, inspect the request and update the rule accordingly
-		ruleconfig.Rules[r.RequestURI] = Monitor(r, rule)
-		s.Proxy.ServeHTTP(w, r)
-		return
+	if s.MonitoringModeEnabled {
+		monitorRequest(r, rule)
+		goto serve
 	}
 
 	// Blocking mode
 	if ruleExists {
 		isBlocked, err = IsRequestBlocked(r, rule)
-		if err != nil {
+		if err != nil { // Block if anything goes out of ordinary
 			log.Error("Request blocked", err)
 		}
 	}
 
 	if isBlocked {
-		io.Copy(io.Discard, r.Body)
-		defer r.Body.Close()
-		log.Errorf("Request blocked. No rule found for %s", r.RequestURI)
-		http.Error(w, "Forbidden", http.StatusForbidden)
+		blockRequest(&w, r)
+		return
 	} else {
-		s.Proxy.ServeHTTP(w, r)
+		goto serve
 	}
+
+serve:
+	s.Proxy.ServeHTTP(w, r)
 }
 
-func Monitor(r *http.Request, rule Rules) Rules {
-	// Generate Regex for body
-	body, _ := io.ReadAll(r.Body)                // read request body
-	r.Body = io.NopCloser(bytes.NewBuffer(body)) // Restore request body after reading it
-	defer r.Body.Close()
-	rule.Body, _ = GenerateRegex([]string{
-		rule.Body,
-		string(body),
-	})
-
-	// Generate Regex for headers
-	for header, value := range r.Header {
-		rule.Headers.Key, _ = GenerateRegex([]string{
-			header,
-			rule.Headers.Key,
-		})
-		rule.Headers.Value, _ = GenerateRegex([]string{
-			strings.Join(value, ","),
-			rule.Headers.Value,
-		})
-	}
-
-	//Generate Regex for Method
-	rule.Method, _ = GenerateRegex([]string{
-		r.Method,
-		rule.Method,
-	})
-
-	return rule
+// monitorRequest inspects the request method, headers and body.
+// Generates a new regex and updates the corresponding rule in ruleconfig.Rules map
+func monitorRequest(r *http.Request, rule Rules) {
+	rule = InspectMethod(r, rule)
+	rule = InspectHeaders(r, rule)
+	rule = InspectBody(r, rule)
+	// Reverse proxy deals with requests in separate goroutines. Map is not thread safe.
+	mutex.Lock()
+	ruleconfig.Rules[r.RequestURI] = rule
+	mutex.Unlock()
 }

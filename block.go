@@ -60,7 +60,6 @@ func checkBody(r *http.Request, rule Rules) (bool, error) {
 
 // checkHeaders takes the incoming request and the associated rule for making blocking decision
 func checkHeaders(r *http.Request, rule Rules) (bool, error) {
-	log.Debug(r.Header)
 	for key, value := range r.Header {
 		valueString := strings.Join(value, ",")
 		if !rule.Headers.KeyRegex.MatchString(key) || !rule.Headers.ValueRegex.MatchString(valueString) {
@@ -72,4 +71,11 @@ func checkHeaders(r *http.Request, rule Rules) (bool, error) {
 		}
 	}
 	return false, nil
+}
+
+func blockRequest(w *http.ResponseWriter, r *http.Request) {
+	io.Copy(io.Discard, r.Body)
+	defer r.Body.Close()
+	log.Errorf("Request blocked. No rule found for %s", r.RequestURI)
+	http.Error(*w, "Forbidden", http.StatusForbidden)
 }

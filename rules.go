@@ -4,9 +4,13 @@
 package main
 
 import (
+	"bytes"
+	"io"
 	"log"
+	"net/http"
 	"os"
 	"regexp"
+	"strings"
 
 	"github.com/itchyny/rassemble-go"
 	"gopkg.in/yaml.v3"
@@ -74,4 +78,40 @@ func (r *RuleConfig) WriteRules() error {
 		return err
 	}
 	return nil
+}
+
+func InspectBody(r *http.Request, rule Rules) Rules {
+	// Generate Regex for body
+	body, _ := io.ReadAll(r.Body)                // read request body
+	r.Body = io.NopCloser(bytes.NewBuffer(body)) // Restore request body after reading it
+	defer r.Body.Close()
+	rule.Body, _ = GenerateRegex([]string{
+		rule.Body,
+		string(body),
+	})
+	return rule
+}
+
+func InspectHeaders(r *http.Request, rule Rules) Rules {
+	// Generate Regex for headers
+	for header, value := range r.Header {
+		rule.Headers.Key, _ = GenerateRegex([]string{
+			header,
+			rule.Headers.Key,
+		})
+		rule.Headers.Value, _ = GenerateRegex([]string{
+			strings.Join(value, ","),
+			rule.Headers.Value,
+		})
+	}
+	return rule
+}
+
+func InspectMethod(r *http.Request, rule Rules) Rules {
+	//Generate Regex for Method
+	rule.Method, _ = GenerateRegex([]string{
+		r.Method,
+		rule.Method,
+	})
+	return rule
 }
