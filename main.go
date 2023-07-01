@@ -19,31 +19,6 @@ var monitor = false
 var timeout = 10
 var ruleconfig RuleConfig
 
-// init performs CLI flags, reads the rule file for use and sets log level
-func init() {
-	log.Info("Initialising...")
-	ruleconfig = RuleConfig{
-		Path:  path,
-		Rules: make(map[string]Rules),
-	}
-	log.Info("Reading rules...")
-	ruleconfig.IngestRules()
-	if verbose {
-		log.SetLevel(log.DebugLevel)
-	}
-	if !monitor {
-		log.Info("Compiling regex...")
-		for URI, rule := range ruleconfig.Rules {
-			rule.BodyRegex = *regexp.MustCompile(rule.Body)
-			rule.MethodRegex = *regexp.MustCompile(rule.Method)
-			rule.Headers.KeyRegex = *regexp.MustCompile(rule.Headers.Key)
-			rule.Headers.ValueRegex = *regexp.MustCompile(rule.Headers.Value)
-			ruleconfig.Rules[URI] = rule
-		}
-	}
-	log.Debug("Ingested Rules: ", ruleconfig.Rules)
-}
-
 func parseFlags() {
 	flag.StringVar(&targetURL, "targetURL", targetURL, "URL to proxy")
 	flag.StringVar(&proxyPort, "proxyPort", proxyPort, "port to host the proxy")
@@ -55,7 +30,36 @@ func parseFlags() {
 }
 
 func main() {
+	log.Info("Initialising...")
+
+	if verbose {
+		log.SetLevel(log.DebugLevel)
+	}
+
+	ruleconfig = RuleConfig{
+		Path:  path,
+		Rules: make(map[string]Rules),
+	}
+
+	log.Infof("Reading rules from %s", ruleconfig.Path)
+	ruleconfig.IngestRules()
+	log.Debug("Ingested Rules: %v", ruleconfig.Rules)
+
+	// if not in monitoring mode, compile regex for blocking
+	if !monitor {
+		log.Info("Compiling regex...")
+		for URI, rule := range ruleconfig.Rules {
+			rule.BodyRegex = *regexp.MustCompile(rule.Body)
+			rule.MethodRegex = *regexp.MustCompile(rule.Method)
+			rule.Headers.KeyRegex = *regexp.MustCompile(rule.Headers.Key)
+			rule.Headers.ValueRegex = *regexp.MustCompile(rule.Headers.Value)
+			ruleconfig.Rules[URI] = rule
+		}
+	}
+
+	// CLI flags
 	parseFlags()
+
 	// Goroutine when application is run in monitoring mode.
 	// To monitor for ctrl+c (SIGINT) and writes the monitored rules to a file.
 	if monitor {
@@ -69,6 +73,8 @@ func main() {
 			os.Exit(0)
 		}()
 	}
+
+	// Initilaizing finished
 
 	log.Info("Starting Proxy...")
 	proxy, err := NewProxy(targetURL, time.Duration(timeout)*time.Second, monitor)
