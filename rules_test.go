@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"io"
 	"net/http"
+	"os"
+	"reflect"
 	"regexp"
 	"testing"
 )
@@ -29,9 +31,10 @@ func TestInspectMethod(t *testing.T) {
 	}
 
 	// Check if the generated regex is valid
-	_, err = regexp.Compile(result.Method)
-	if err != nil {
-		t.Errorf("Failed to compile generated regex: %v", err)
+	expectedMethod := "GET,POST"
+	result.MethodRegex = *regexp.MustCompile(result.Method)
+	if !result.MethodRegex.MatchString(expectedMethod) {
+		t.Errorf("Expected updated rule method regex to match pattern '%s'", expectedMethod)
 	}
 }
 
@@ -65,13 +68,16 @@ func TestInspectHeaders(t *testing.T) {
 	}
 
 	// Check if the generated regexes are valid
-	_, err = regexp.Compile(result.Headers.Key)
-	if err != nil {
-		t.Errorf("Failed to compile generated headers key regex: %v", err)
+	expectedHeaderKey := "User-Agent,Content-Type"
+	result.Headers.KeyRegex = *regexp.MustCompile(result.Headers.Key)
+	if !result.Headers.KeyRegex.MatchString(expectedHeaderKey) {
+		t.Errorf("Expected updated rule header key regex to match pattern '%s'", expectedHeaderKey)
 	}
-	_, err = regexp.Compile(result.Headers.Value)
-	if err != nil {
-		t.Errorf("Failed to compile generated headers value regex: %v", err)
+
+	expectedHeaderValue := "Chrome,Mozilla/5.0"
+	result.Headers.ValueRegex = *regexp.MustCompile(result.Headers.Value)
+	if !result.Headers.ValueRegex.MatchString(expectedHeaderValue) {
+		t.Errorf("Expected updated rule header value regex to match pattern '%s'", expectedHeaderValue)
 	}
 }
 
@@ -103,4 +109,48 @@ func TestInspectBody(t *testing.T) {
 		t.Errorf("Expected updated rule body regex to match pattern '%s'",
 			expectedmatch)
 	}
+}
+
+func TestReadWriteRules(t *testing.T) {
+	// Create a temporary file for testing
+	tmpFile, err := os.CreateTemp("", "test_rules.yaml")
+	if err != nil {
+		t.Fatal("Failed to create temporary file:", err)
+	}
+	defer os.Remove(tmpFile.Name())
+
+	// Create a sample RuleConfig
+	ruleConfig := &RuleConfig{
+		Path: tmpFile.Name(),
+		Rules: map[string]Rules{
+			"/": {
+				Method: "GET",
+				Body:   "",
+				Headers: Headers{
+					Key:   "Content-Type",
+					Value: "application/json",
+				},
+			},
+		},
+	}
+
+	// Invoke the WriteRules function
+	err = ruleConfig.WriteRules()
+
+	// Check for any errors
+	if err != nil {
+		t.Errorf("WriteRules returned an error: %v", err)
+	}
+
+	// Read the written file
+	testRuleConfig := &RuleConfig{
+		Path:  tmpFile.Name(),
+		Rules: make(map[string]Rules),
+	}
+	testRuleConfig.IngestRules()
+	// Validate the file content
+	if !reflect.DeepEqual(testRuleConfig, ruleConfig) {
+		t.Errorf("Expected: %v , received %v", ruleConfig, testRuleConfig)
+	}
+
 }
