@@ -29,13 +29,6 @@ func TestInspectMethod(t *testing.T) {
 	if result.Method == rule.Method {
 		t.Errorf("Expected method to be updated, got %s", result.Method)
 	}
-
-	// Check if the generated regex is valid
-	expectedMethod := "GET,POST"
-	result.MethodRegex = *regexp.MustCompile(result.Method)
-	if !result.MethodRegex.MatchString(expectedMethod) {
-		t.Errorf("Expected updated rule method regex to match pattern '%s'", expectedMethod)
-	}
 }
 
 func TestInspectHeaders(t *testing.T) {
@@ -66,19 +59,6 @@ func TestInspectHeaders(t *testing.T) {
 	if result.Headers.Value == rule.Headers.Value {
 		t.Errorf("Expected headers value to be updated, got %s", result.Headers.Value)
 	}
-
-	// Check if the generated regexes are valid
-	expectedHeaderKey := "User-Agent,Content-Type"
-	result.Headers.KeyRegex = *regexp.MustCompile(result.Headers.Key)
-	if !result.Headers.KeyRegex.MatchString(expectedHeaderKey) {
-		t.Errorf("Expected updated rule header key regex to match pattern '%s'", expectedHeaderKey)
-	}
-
-	expectedHeaderValue := "Chrome,Mozilla/5.0"
-	result.Headers.ValueRegex = *regexp.MustCompile(result.Headers.Value)
-	if !result.Headers.ValueRegex.MatchString(expectedHeaderValue) {
-		t.Errorf("Expected updated rule header value regex to match pattern '%s'", expectedHeaderValue)
-	}
 }
 
 func TestInspectBody(t *testing.T) {
@@ -101,13 +81,6 @@ func TestInspectBody(t *testing.T) {
 
 	if request.Body == nil {
 		t.Errorf("Request body should not be empty after inspection")
-	}
-	// Verify the generated regex
-	expectedmatch := "Sample body,initial regex"
-	updatedRule.BodyRegex = *regexp.MustCompile(updatedRule.Body)
-	if !updatedRule.BodyRegex.MatchString(expectedmatch) {
-		t.Errorf("Expected updated rule body regex to match pattern '%s'",
-			expectedmatch)
 	}
 }
 
@@ -152,5 +125,58 @@ func TestReadWriteRules(t *testing.T) {
 	if !reflect.DeepEqual(testRuleConfig, ruleConfig) {
 		t.Errorf("Expected: %v , received %v", ruleConfig, testRuleConfig)
 	}
+}
 
+// For the current implementation of our regex generator this test should suffice
+// For when we move to a better regex generator this test will need to be updated accordingly
+func TestGenerateRegex(t *testing.T) {
+	// Test cases
+	testCases := []struct {
+		input          []string
+		expected       string
+		shouldMatch    []string
+		shouldNotMatch []string
+	}{
+		{
+			input:          []string{"apple", "banana", "cherry"},
+			expected:       "apple|banana|cherry",
+			shouldMatch:    []string{"apple", "banana", "cherry"},
+			shouldNotMatch: []string{"grape", "mango"},
+		},
+		{
+			input:          []string{"123", "456", "789"},
+			expected:       "123|456|789",
+			shouldMatch:    []string{"123", "456", "789"},
+			shouldNotMatch: []string{"111", "222", "333"},
+		},
+		{
+			input:          []string{"one", "two", "three", "four", "five"},
+			expected:       "one|t(?:wo|hree)|f(?:our|ive)",
+			shouldMatch:    []string{"one", "two", "three"},
+			shouldNotMatch: []string{"six", "seven"},
+		},
+	}
+
+	for _, testCase := range testCases {
+		result, err := GenerateRegex(testCase.input)
+		if err != nil {
+			t.Errorf("Error generating regex: %v", err)
+		}
+
+		if result != testCase.expected {
+			t.Errorf("Expected %s, but got %s", testCase.expected, result)
+		}
+
+		for _, str := range testCase.shouldMatch {
+			if !regexp.MustCompile(result).MatchString(str) {
+				t.Errorf("Expected %s to match %s", str, result)
+			}
+		}
+
+		for _, str := range testCase.shouldNotMatch {
+			if regexp.MustCompile(result).MatchString(str) {
+				t.Errorf("Expected %s not to match %s", str, result)
+			}
+		}
+	}
 }
