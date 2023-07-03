@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"net/http"
 	"net/http/httptest"
 	"regexp"
@@ -77,5 +78,82 @@ func TestCheckHeaders(t *testing.T) {
 	expectedErrorMessage := "request header Content-Type:[text/plain] violates defined header Content-Type:application/json"
 	if err.Error() != expectedErrorMessage {
 		t.Errorf("Expected error message '%s', got '%s'", expectedErrorMessage, err.Error())
+	}
+}
+
+func TestCheckBody(t *testing.T) {
+	// Create a test request with a specific body
+	reqBody := []byte("Test body content")
+	req := httptest.NewRequest("POST", "http://example.com", bytes.NewBuffer(reqBody))
+
+	// Define the rule for testing
+	rule := Rules{
+		BodyRegex: *regexp.MustCompile("^Test"),
+		Body:      "Test body",
+	}
+
+	// Call the function being tested
+	result, err := checkBody(req, rule)
+
+	// Assert the expected behavior
+	if err != nil {
+		t.Fatalf("Unexpected error: %v", err)
+	}
+
+	if result {
+		t.Error("Expected false, got true")
+	}
+}
+
+func TestCheckMethod(t *testing.T) {
+	// Create a test request with a specific method
+	req := httptest.NewRequest("GET", "http://example.com", nil)
+	// Define the rule for testing
+	rule := Rules{
+		MethodRegex: *regexp.MustCompile("^(GET|POST)$"),
+		Method:      "GET",
+	}
+
+	// Call the function being tested
+	result, err := checkMethod(req, rule)
+
+	// Assert the expected behavior
+	if err != nil {
+		t.Fatalf("Unexpected error: %v", err)
+	}
+
+	if result {
+		t.Error("Expected false, got true")
+	}
+}
+
+func TestIsRequestBlocked(t *testing.T) {
+	// Create a test request with a specific method, body, and headers
+	req := httptest.NewRequest("GET", "http://example.com", nil)
+	req.Header.Set("Accept", "application/json")
+	// Define the rule for testing
+	rule := Rules{
+		MethodRegex: *regexp.MustCompile("GET"),
+		Method:      "GET",
+		BodyRegex:   *regexp.MustCompile(""),
+		Body:        "",
+		Headers: Headers{
+			Key:        "Accept",
+			KeyRegex:   *regexp.MustCompile("Accept"),
+			Value:      "application/json",
+			ValueRegex: *regexp.MustCompile("application/json"),
+		},
+	}
+
+	// Call the function being tested
+	result, err := IsRequestBlocked(req, rule)
+
+	// Assert the expected behavior
+	if err != nil {
+		t.Fatalf("Unexpected error: %v", err)
+	}
+
+	if result {
+		t.Error("Expected false, got true")
 	}
 }
