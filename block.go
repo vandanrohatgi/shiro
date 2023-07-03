@@ -74,8 +74,12 @@ func checkHeaders(r *http.Request, rule Rules) (bool, error) {
 }
 
 func blockRequest(w *http.ResponseWriter, r *http.Request) {
-	io.Copy(io.Discard, r.Body)
-	defer r.Body.Close()
+	_, err := io.Copy(io.Discard, r.Body)
+	if err != nil {
+		log.Error("Error discarding request body", err)
+	} else {
+		defer r.Body.Close()
+	}
 	log.Errorf("Request blocked. No rule found for %s", r.RequestURI)
 	http.Error(*w, "Forbidden", http.StatusForbidden)
 }
