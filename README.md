@@ -1,4 +1,4 @@
-# Shiro シロ शिरो 
+# shiro
 
 A white list based web application firewall. Why? Because I have seen how much effort and time is gone into setup of black list rules, improving them, taking care of bypasses. Oh Im tired of the bypasses.
 
@@ -38,3 +38,4 @@ Also I wanted to learn GO.
 3. [Charm](https://charm.sh/) for their log library (That website tho o_o)
 4. [Kenneth](https://kennethreitz.org/) for HTTPBin (which is my primary target for proxy testing)
 5. [itchyny](https://github.com/itchyny/) for the rassemble-go library
+6. <a href="https://www.flaticon.com/free-icons/keyhole" title="keyhole icons">Icons created by Pixel perfect - Flaticon</a>
