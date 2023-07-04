@@ -1,6 +1,6 @@
-# Shiro WAF シロワフ शिरो वाफ 
+# Shiro シロ शिरो 
 
-A white list based firewall. Why? Because I have seen how much effort and time is gone into setup black list rules, improving them, taking care of bypasses. Oh Im tired of the bypasses.
+A white list based web application firewall. Why? Because I have seen how much effort and time is gone into setup of black list rules, improving them, taking care of bypasses. Oh Im tired of the bypasses.
 
 Also I wanted to learn GO.
 
@@ -27,7 +27,7 @@ Also I wanted to learn GO.
 - [] make the tool CI/CD friendly
 - [] dockerize
 - [] host the the firewall (ngrok / AWS)
-- [] Unit tests
+- [] Unit tests (in progress)
 - [] Documentation
 - [] GUI using maybe dart/kotlin/javascript
 
