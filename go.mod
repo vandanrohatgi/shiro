@@ -1,4 +1,4 @@
-module github.com/vandanrohatgi/shiro_waf
+module github.com/vandanrohatgi/shiro
 
 go 1.20
 
