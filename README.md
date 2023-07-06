@@ -4,32 +4,33 @@ A white list based web application firewall. Why? Because I have seen how much e
 
 Also I wanted to learn GO.
 
-## Todo
 
-- [x] test web server 
-- [x] proxy server 
-- [x] connect both servers 
-- [x] create custom golang web server 
-- [x] rules regex file format 
-- [x] filter and block traffic based on rules
-- [x] Convert current List of rules to Dictionary for faster lookup
-- [x] Pre-compile regex during initilisation
-- [x] Improve Blocking based on:
-    - [x] URI
-    - [x] Body
-    - [x] Method
-    - [x] headers
-- [x] monitoring mode (to inspect requests and create rule file)
-    - [] Pure Golang implementation (far into the future)
-    - [x] Use an already built CLI tool to generate regexes
-- [x] auto generate rules file
-- [] expand from http protocol to multiple protocols (maybe a whole new application is a better idea)
-- [] make the tool CI/CD friendly
-- [] dockerize
-- [] host the the firewall (ngrok / AWS)
-- [] Unit tests (in progress)
-- [] Documentation
-- [] GUI using maybe dart/kotlin/javascript
+## Usage 
+
+1. Download a binary for your system.
+2. Running the program right and browsing to [http://localhost:8080](http://localhost:8080) right away will block all requests because there are no rules right now. You can either copy over the [rules.yaml.sample](rules.yaml.sample) file and remove ".sample" from it's name or enter monitoring mode and the program will create some rules for you.
+3. Monitoring mode will not block anything but will create patterns from you browsing and store them in rules.yaml.
+4. After you have a rules.yaml file you can start browsing and observe blocking by browsing a url that either does not have a rule for OR making a request to a URL which you did not interact with while generating the rules.
+
+## Help
+
+```
+./shiro --help
+
+Usage of ./shiro:
+  -monitor
+        Monitor proxy traffic and generate rules automatically
+  -path string
+        path to the rules file (default "rules.yaml")
+  -proxyPort string
+        port to host the proxy (default "8080")
+  -targetURL string
+        URL to proxy (default "https://httpbin.org/")
+  -timeout int
+        Timeout for the proxy requests (default 10)
+  -verbose
+        Output all types of logs
+```
 
 ### Kudos
 
