@@ -4,7 +4,7 @@
 *.dll
 *.so
 *.dylib
-shiro_waf
+shiro
 *.bak
 
 # Test binary, built with `go test -c`
