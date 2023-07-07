@@ -30,6 +30,10 @@ func parseFlags() {
 }
 
 func main() {
+
+	// CLI flags
+	parseFlags()
+
 	log.Info("Initialising...")
 
 	if verbose {
@@ -56,9 +60,6 @@ func main() {
 			ruleconfig.Rules[URI] = rule
 		}
 	}
-
-	// CLI flags
-	parseFlags()
 
 	// Goroutine when application is run in monitoring mode.
 	// To monitor for ctrl+c (SIGINT) and writes the monitored rules to a file.
