@@ -6,12 +6,12 @@ package main
 import (
 	"bytes"
 	"io"
-	"log"
 	"net/http"
 	"os"
 	"regexp"
 	"strings"
 
+	"github.com/charmbracelet/log"
 	"github.com/itchyny/rassemble-go"
 	"gopkg.in/yaml.v3"
 )
@@ -50,7 +50,9 @@ func (r *RuleConfig) IngestRules() {
 	//rules := make(map[string]Rules)
 	yamlFile, err := os.ReadFile(r.Path)
 	if err != nil {
-		log.Fatal("Error reading file", r.Path, err)
+		log.Errorf("Error reading specified file %s, error: %v",
+			r.Path,
+			err)
 	}
 	err = yaml.Unmarshal(yamlFile, &r.Rules)
 	if err != nil {
