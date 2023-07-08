@@ -49,8 +49,6 @@ func NewProxy(urlRaw string, timeout time.Duration, monitor bool) (*SimpleProxy,
 }
 
 func (s *SimpleProxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	// Show incoming request info
-	log.Infof("%s %s %s", r.RemoteAddr, r.Method, r.RequestURI)
 
 	// Update the request's context with the client's context
 	// This code is for setting the time duration for the whole process of taking the request, connecting to target URL,
@@ -62,6 +60,9 @@ func (s *SimpleProxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	// Check if URI has a rule for it
 	rule, ruleExists := ruleconfig.Rules[r.RequestURI]
+
+	// Show incoming request info
+	log.Infof("%s %s %s Rule Exists: %t", r.RemoteAddr, r.Method, r.RequestURI, ruleExists)
 
 	if s.MonitoringModeEnabled {
 		monitorRequest(r, rule)

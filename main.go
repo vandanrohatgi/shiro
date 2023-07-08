@@ -68,7 +68,7 @@ func main() {
 			sigchan := make(chan os.Signal, 1)
 			signal.Notify(sigchan, os.Interrupt)
 			<-sigchan
-			log.Error("Initiating exit process...")
+			log.Info("Received Ctrl+C ... Initiating exit process")
 
 			ruleconfig.WriteRules()
 			os.Exit(0)
