@@ -12,8 +12,6 @@ import (
 	"github.com/charmbracelet/log"
 )
 
-// var webServerUrl string = "https://httpbin.org/"
-var isBlocked bool = true // Block by default
 var err error
 var mutex sync.Mutex
 
@@ -49,6 +47,7 @@ func NewProxy(urlRaw string, timeout time.Duration, monitor bool) (*SimpleProxy,
 }
 
 func (s *SimpleProxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	var isBlocked bool = true // Block by default
 
 	// Update the request's context with the client's context
 	// This code is for setting the time duration for the whole process of taking the request, connecting to target URL,
