@@ -75,7 +75,7 @@ func TestCheckHeaders(t *testing.T) {
 	}
 
 	// Check if the error message is correct
-	expectedErrorMessage := "request header Content-Type:[text/plain] violates defined header Content-Type:application/json"
+	expectedErrorMessage := "request header [text/plain] violates defined header application/json"
 	if err.Error() != expectedErrorMessage {
 		t.Errorf("Expected error message '%s', got '%s'", expectedErrorMessage, err.Error())
 	}

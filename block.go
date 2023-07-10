@@ -11,24 +11,26 @@ import (
 )
 
 func IsRequestBlocked(r *http.Request, rule Rules) (bool, error) {
+
+	log.Debug("Triggering Blocking logic...")
 	// Check method
 	methodDecision, err := checkMethod(r, rule)
 	if err != nil || methodDecision {
 		return true, err
 	}
-
+	log.Debugf("Method Block: %t", methodDecision)
 	// Check Body
 	bodyDecision, err := checkBody(r, rule)
 	if err != nil || bodyDecision {
 		return true, err
 	}
-
+	log.Debugf("Body Block: %t", bodyDecision)
 	//check headers
 	headerDecision, err := checkHeaders(r, rule)
 	if err != nil || headerDecision {
 		return true, err
 	}
-
+	log.Debugf("Header Block: %t", headerDecision)
 	// request not blocked
 	return false, nil
 }
@@ -62,11 +64,15 @@ func checkBody(r *http.Request, rule Rules) (bool, error) {
 func checkHeaders(r *http.Request, rule Rules) (bool, error) {
 	for key, value := range r.Header {
 		valueString := strings.Join(value, ",")
-		if !rule.Headers.KeyRegex.MatchString(key) || !rule.Headers.ValueRegex.MatchString(valueString) {
-			return true, fmt.Errorf("request header %s:%s violates defined header %s:%s",
+		if !rule.Headers.KeyRegex.MatchString(key) {
+			return true, fmt.Errorf("request header %s violates defined header %s",
 				key,
-				value,
 				rule.Headers.Key,
+			)
+		}
+		if !rule.Headers.ValueRegex.MatchString(valueString) {
+			return true, fmt.Errorf("request header %s violates defined header %s",
+				value,
 				rule.Headers.Value)
 		}
 	}
